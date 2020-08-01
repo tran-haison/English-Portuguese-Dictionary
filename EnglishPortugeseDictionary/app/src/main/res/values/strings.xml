@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">English Portugese Dictionary</string>
+    <string name="todo">TODO</string>
+    <string name="settings">Settings</string>
+    <string name="history_fragment">History fragment</string>
+    <string name="see_detail">See detail</string>
+    <string name="portugese_dictionary">Portugese Dictionary</string>
+    <string name="a_simple_dictionary_app">Simple dictionary app</string>
+    <string name="type_a_word_to_get_its_meaning">Type a word to get its meaning</string>
+</resources>
