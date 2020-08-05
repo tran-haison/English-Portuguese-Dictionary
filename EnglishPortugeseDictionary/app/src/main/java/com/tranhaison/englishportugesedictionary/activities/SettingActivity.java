@@ -1,4 +1,4 @@
-package com.tranhaison.englishportugesedictionary.models;
+package com.tranhaison.englishportugesedictionary.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 

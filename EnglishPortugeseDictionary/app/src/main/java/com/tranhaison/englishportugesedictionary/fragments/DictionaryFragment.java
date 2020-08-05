@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.tranhaison.englishportugesedictionary.FragmentListener;
+import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.R;
 
 public class DictionaryFragment extends Fragment {

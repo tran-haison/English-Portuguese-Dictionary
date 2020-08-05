@@ -6,8 +6,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/drawerLayout"
-    tools:context=".models.MainActivity"
-    android:fitsSystemWindows="true" >
+    tools:context=".activities.MainActivity"
+    android:fitsSystemWindows="true"
+    tools:openDrawer="start">
 
     <com.google.android.material.navigation.NavigationView
         android:layout_width="wrap_content"
@@ -22,26 +23,38 @@
 
         <com.mancj.materialsearchbar.MaterialSearchBar
             android:id="@+id/search_bar"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="48dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/btnDictionaryType"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:mt_textColor="#34332A"
-            app:mt_hintColor="#34332A"
             app:mt_hint="Searching ..."
-            app:mt_menuIconDrawable="@drawable/menu_24dp"
+            app:mt_hintColor="#34332A"
+            app:mt_menuIconDrawable="@drawable/ic_menu_24dp"
             app:mt_navIconEnabled="true"
+            app:mt_placeholder="Type a word..."
+            app:mt_placeholderColor="#34332A"
             app:mt_searchBarColor="#fdcd67"
             app:mt_speechMode="true"
-            app:mt_placeholder="Search"
-            app:mt_placeholderColor="#34332A" />
+            app:mt_textColor="#34332A" />
+
+        <Button
+            android:id="@+id/btnDictionaryType"
+            style="?attr/materialButtonStyle"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="#fdcd67"
+            android:text="@string/e_p"
+            android:textStyle="bold"
+            android:gravity="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <ImageView
-            android:id="@+id/imageViewLogo"
+            android:id="@+id/ivLogo"
             android:layout_width="300dp"
             android:layout_height="300dp"
-            android:src="@drawable/book"
+            android:src="@drawable/lg_book"
             android:transitionName="app_logo"
             android:contentDescription="@string/todo"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -51,7 +64,7 @@
             app:layout_constraintVertical_bias="0.4" tools:targetApi="lollipop" />
 
         <TextView
-            android:id="@+id/textViewPrompt"
+            android:id="@+id/tvPrompt"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
@@ -65,10 +78,10 @@
             android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/imageViewLogo" tools:targetApi="lollipop" />
+            app:layout_constraintTop_toBottomOf="@id/ivLogo" tools:targetApi="lollipop" />
 
         <FrameLayout
-            android:id="@+id/fragment_container"
+            android:id="@+id/frameLayoutContainer"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"

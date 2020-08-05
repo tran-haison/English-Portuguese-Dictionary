@@ -7,4 +7,9 @@
     <string name="portugese_dictionary">Portugese Dictionary</string>
     <string name="a_simple_dictionary_app">Simple dictionary app</string>
     <string name="type_a_word_to_get_its_meaning">Type a word to get its meaning</string>
+    <string name="word">Word</string>
+    <string name="eng_por">English - Portuguese</string>
+    <string name="por_eng">Portuguese - English</string>
+    <string name="e_p">E-P</string>
+    <string name="clear_all_history">Clear all history</string>
 </resources>

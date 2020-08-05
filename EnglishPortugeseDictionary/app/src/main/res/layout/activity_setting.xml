@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".models.SettingActivity">
+    tools:context=".activities.SettingActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:id="@+id/imageButtonBack"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:src="@drawable/back_24dp"
+            android:src="@drawable/ic_back_24dp"
             android:contentDescription="@string/todo"
             android:background="?attr/selectableItemBackground"
             android:layout_centerVertical="true"/>

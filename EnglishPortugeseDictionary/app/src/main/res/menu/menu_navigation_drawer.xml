@@ -1,37 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:id="@+id/navigation_setting"
-        android:title="Setting"
-        android:icon="@drawable/settings_24dp"/>
+    <group
+        android:checkableBehavior="single" >
 
-    <group android:checkableBehavior="single" >
+        <item android:id="@+id/navigation_setting"
+            android:title="Setting"
+            android:icon="@drawable/ic_settings"/>
 
         <item android:title="BOOKMARKS">
             <menu>
-                <item
-                    android:id="@+id/navigation_favorite"
-                    android:title="Favorites"
-                    android:icon="@drawable/favorite_24dp" />
+                <group
+                    android:checkableBehavior="single" >
 
-                <item
-                    android:id="@+id/navigation_history"
-                    android:title="History"
-                    android:icon="@drawable/history_24dp" />
+                    <item
+                        android:id="@+id/navigation_favorite"
+                        android:title="Favorites"
+                        android:icon="@drawable/ic_favorite_24dp" />
+
+                    <item
+                        android:id="@+id/navigation_history"
+                        android:title="History"
+                        android:icon="@drawable/ic_history_24dp" />
+                </group>
             </menu>
         </item>
 
         <item android:title="OTHERS">
             <menu>
-                <item
-                    android:id="@+id/navigation_help"
-                    android:title="Help"
-                    android:icon="@drawable/help_24dp" />
+                <group
+                    android:checkableBehavior="single" >
+                    <item
+                        android:id="@+id/navigation_help"
+                        android:title="Help"
+                        android:icon="@drawable/ic_help_24dp" />
 
-                <item
-                    android:id="@+id/navigation_about"
-                    android:title="About"
-                    android:icon="@drawable/info_24dp" />
+                    <item
+                        android:id="@+id/navigation_about"
+                        android:title="About"
+                        android:icon="@drawable/ic_info_24dp" />
+                </group>
             </menu>
         </item>
 

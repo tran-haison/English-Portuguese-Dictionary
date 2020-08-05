@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".models.SplashScreenActivity"
+    tools:context=".activities.SplashScreenActivity"
     android:background="#fdcd67">
 
     <ImageView
@@ -14,7 +14,7 @@
         android:layout_marginTop="32dp"
         android:background="@null"
         android:contentDescription="@string/todo"
-        android:src="@drawable/book"
+        android:src="@drawable/lg_book"
         android:transitionName="app_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
