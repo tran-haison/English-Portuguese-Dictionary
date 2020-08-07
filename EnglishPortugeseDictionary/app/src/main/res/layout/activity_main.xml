@@ -29,14 +29,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:mt_hint="Searching ..."
-            app:mt_hintColor="#34332A"
+            app:mt_hintColor="@color/colorDefault"
             app:mt_menuIconDrawable="@drawable/ic_menu_24dp"
             app:mt_navIconEnabled="true"
-            app:mt_placeholder="Type a word..."
-            app:mt_placeholderColor="#34332A"
+            app:mt_placeholder="@string/type_a_word"
+            app:mt_placeholderColor="@color/colorDefault"
             app:mt_searchBarColor="#fdcd67"
-            app:mt_speechMode="true"
-            app:mt_textColor="#34332A" />
+            app:mt_speechMode="true" />
 
         <Button
             android:id="@+id/btnDictionaryType"
@@ -81,15 +80,13 @@
             app:layout_constraintTop_toBottomOf="@id/ivLogo" tools:targetApi="lollipop" />
 
         <FrameLayout
-            android:id="@+id/frameLayoutContainer"
+            android:id="@+id/frameLayoutContainerGeneral"
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/search_bar">
-
-        </FrameLayout>
+            app:layout_constraintTop_toBottomOf="@+id/search_bar"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

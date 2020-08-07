@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.DetailActivity">
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutToolBar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" 
+        android:background="@color/colorPrimary">
+        
+        <ImageButton
+            style="?attr/materialButtonStyle"
+            android:id="@+id/ibBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/ic_back_24dp"
+            android:background="@color/colorPrimary"
+            android:contentDescription="@string/todo" />
+        
+        <ImageButton
+            style="?attr/materialButtonStyle"
+            android:id="@+id/ibFavorite"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/ic_favorite_border_24dp"
+            android:background="@color/colorPrimary" />
+        
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toStartOf="@id/ibFavorite"
+            android:layout_toEndOf="@id/ibBack"
+            android:text="@string/portuguese_dictionary"
+            android:textSize="22sp"
+            android:fontFamily="@font/bangers"
+            android:includeFontPadding="false"
+            android:gravity="center" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/relativeLayoutSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/relativeLayoutToolBar"
+        android:background="@color/colorPrimary">
+
+        <EditText
+            android:id="@+id/etSearch"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_toStartOf="@id/ibVoiceSearch"
+            android:drawableStart="@drawable/ic_search_24dp"
+            android:drawablePadding="10dp"
+            android:inputType="textPersonName"
+            android:background="@drawable/custom_search_bar"
+            android:hint="@string/type_a_word"
+            android:textColorHint="@color/colorDefault"
+            android:fontFamily="@font/antic"
+            android:importantForAutofill="no" />
+
+        <ImageButton
+            style="?attr/materialButtonStyle"
+            android:id="@+id/ibVoiceSearch"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:src="@drawable/ic_voice_24dp"
+            android:background="@color/colorPrimary"
+            android:contentDescription="@string/todo"/>
+
+    </RelativeLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        app:tabTextColor="@color/colorDefault"
+        app:tabIndicatorColor="@color/colorTabIndicator"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/relativeLayoutSearch" />
+
+    <androidx.viewpager.widget.ViewPager
+        android:id="@+id/viewPagerContainer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tabLayout"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

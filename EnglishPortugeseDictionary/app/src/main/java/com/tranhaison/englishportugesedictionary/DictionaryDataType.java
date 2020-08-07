@@ -2,12 +2,12 @@ package com.tranhaison.englishportugesedictionary;
 
 import java.util.ArrayList;
 
-public class DictionaryType {
+public class DictionaryDataType {
 
-    public static ArrayList<String> getData(int id) {
-        if (id == Constants.POR_ENG) {
+    public static ArrayList<String> getData(int dictionary_type) {
+        if (dictionary_type == Constants.POR_ENG) {
             return getPorEng();
-        } else if (id == Constants.ENG_POR) {
+        } else if (dictionary_type == Constants.ENG_POR) {
             return getEngPor();
         } else {
             return null;

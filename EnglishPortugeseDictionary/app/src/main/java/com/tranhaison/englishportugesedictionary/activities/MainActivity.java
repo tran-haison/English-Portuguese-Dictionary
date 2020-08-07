@@ -1,6 +1,7 @@
 package com.tranhaison.englishportugesedictionary.activities;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -8,6 +9,7 @@ import androidx.fragment.app.Fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.MenuItem;
@@ -24,36 +26,39 @@ import com.google.android.material.navigation.NavigationView;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.tranhaison.englishportugesedictionary.Constants;
 import com.tranhaison.englishportugesedictionary.DictionaryState;
+import com.tranhaison.englishportugesedictionary.DictionaryDataType;
 import com.tranhaison.englishportugesedictionary.fragments.FavoritesFragment;
 import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.fragments.HistoryFragment;
 import com.tranhaison.englishportugesedictionary.R;
 import com.tranhaison.englishportugesedictionary.fragments.SearchFragment;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     // Init Views
     DrawerLayout drawerLayout;
+    FrameLayout frameLayoutContainerGeneral;
     NavigationView navigationView;
     MaterialSearchBar searchBar;
     ImageView ivLogo;
     TextView tvPrompt;
     Button btnDictionaryType;
-    FrameLayout frameLayoutContainer;
 
     // Init Fragments
     FavoritesFragment favoritesFragment;
     HistoryFragment historyFragment;
     SearchFragment searchFragment;
 
-    // Init a variable to get current dictionary type (default = ENG - POR)
-    public int dictionary_type = Constants.ENG_POR;
+    // Init variables to hold current dictionary type (default = ENG - POR)
+    private int dictionary_type = Constants.ENG_POR;
+    private ArrayList<String> dataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         // Map Views from layout file
@@ -65,9 +70,11 @@ public class MainActivity extends AppCompatActivity {
         // Init and handle Fragments's event
         initFragments();
         handleFragmentsEvent();
+        // Pass data list to Search Fragment when user first open the app
+        passDataToSearchFragment();
 
         // Handle events for Views and Menu
-        setShowPopUpMenu();
+        showPopUpMenu();
         setNavigationItemSelected();
         setSearchTextChange();
         setSearchAction();
@@ -83,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
         ivLogo = findViewById(R.id.ivLogo);
         tvPrompt = findViewById(R.id.tvPrompt);
         btnDictionaryType = findViewById(R.id.btnDictionaryType);
-        frameLayoutContainer = findViewById(R.id.frameLayoutContainer);
+        frameLayoutContainerGeneral = findViewById(R.id.frameLayoutContainerGeneral);
     }
 
     /**
@@ -100,26 +107,34 @@ public class MainActivity extends AppCompatActivity {
         goToFragment(searchFragment);
 
         // Set visibility to Fragment and Views
-        frameLayoutContainer.setVisibility(View.GONE);
+        frameLayoutContainerGeneral.setVisibility(View.GONE);
     }
 
     /**
-     * Get latest dictionary state before exiting
+     * Get latest dictionary's state before exiting
      */
     private void getLatestState() {
         String value = DictionaryState.getState(this, Constants.DICTIONARY_TYPE);
 
+        // Get the latest state of dictionary type and load correspond data
         if (value != null) {
             dictionary_type = Integer.parseInt(value);
 
+            // Set text to btnDictionaryType and load data depend on dictionary_type
             if (dictionary_type == Constants.ENG_POR) {
-                btnDictionaryType.setText("E-P");
+                btnDictionaryType.setText(R.string.e_p);
+                dataList = DictionaryDataType.getEngPor();
             } else if (dictionary_type == Constants.POR_ENG) {
-                btnDictionaryType.setText("P-E");
+                btnDictionaryType.setText(R.string.p_e);
+                dataList = DictionaryDataType.getPorEng();
             }
+        } else {
+            // Default dictionary type
+            dictionary_type = Constants.ENG_POR;
+            btnDictionaryType.setText(R.string.e_p);
+            dataList = DictionaryDataType.getEngPor();
         }
     }
-
 
     /**
      * Set Visibility to ivLogo, tvPrompt and flContainer
@@ -129,47 +144,73 @@ public class MainActivity extends AppCompatActivity {
         if (isFragment) {
             ivLogo.setVisibility(View.GONE);
             tvPrompt.setVisibility(View.GONE);
-            frameLayoutContainer.setVisibility(View.VISIBLE);
+            frameLayoutContainerGeneral.setVisibility(View.VISIBLE);
         } else {
             ivLogo.setVisibility(View.VISIBLE);
             tvPrompt.setVisibility(View.VISIBLE);
-            frameLayoutContainer.setVisibility(View.GONE);
+            frameLayoutContainerGeneral.setVisibility(View.GONE);
         }
     }
 
     /**
      * Pop up menu will show up to let user choose dictionary type
      */
-    private void setShowPopUpMenu() {
+    private void showPopUpMenu() {
         btnDictionaryType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 PopupMenu popupMenu = new PopupMenu(MainActivity.this, btnDictionaryType);
-                popupMenu.getMenuInflater().inflate(R.menu.menu_dictionary_type, popupMenu.getMenu());
+                popupMenu.getMenuInflater().inflate(R.menu.menu_popup_dictionary_type, popupMenu.getMenu());
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
+                        Fragment current_fragment = getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainerGeneral);
+
                         switch (menuItem.getItemId()) {
                             case R.id.menu_eng_por:
                                 // Set dictionary type = ENG-POR
                                 dictionary_type = Constants.ENG_POR;
-                                btnDictionaryType.setText("E-P");
+                                btnDictionaryType.setText(R.string.e_p);
 
-                                // Save the current dictionary type into Shared Preferences
-                                DictionaryState.saveState(MainActivity.this, Constants.DICTIONARY_TYPE, String.valueOf(dictionary_type));
+                                // Get English - Portuguese data source
+                                dataList = DictionaryDataType.getEngPor();
+                                passDataToSearchFragment();
+
+                                // Reset data source of SearchFragment
+                                if (current_fragment instanceof SearchFragment) {
+                                    searchFragment.resetDataSource();
+                                }
+
+                                // Save the current dictionary state into Shared Preferences
+                                DictionaryState.saveState(
+                                        MainActivity.this,
+                                        Constants.DICTIONARY_TYPE,
+                                        String.valueOf(dictionary_type));
 
                                 break;
+
                             case R.id.menu_por_eng:
                                 // Set dictionary type = POR-ENG
                                 dictionary_type = Constants.POR_ENG;
-                                btnDictionaryType.setText("P-E");
+                                btnDictionaryType.setText(R.string.p_e);
 
-                                // Save the current dictionary type into Shared Preferences
-                                DictionaryState.saveState(MainActivity.this, Constants.DICTIONARY_TYPE, String.valueOf(dictionary_type));
+                                // Get Portuguese - English data source
+                                dataList = DictionaryDataType.getPorEng();
+                                passDataToSearchFragment();
+
+                                // Reset data source of SearchFragment
+                                if (current_fragment instanceof SearchFragment) {
+                                    searchFragment.resetDataSource();
+                                }
+
+                                // Save the current dictionary state into Shared Preferences
+                                DictionaryState.saveState(
+                                        MainActivity.this,
+                                        Constants.DICTIONARY_TYPE,
+                                        String.valueOf(dictionary_type));
 
                                 break;
                         }
-
                         return false;
                     }
                 });
@@ -185,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
         searchFragment.setOnFragmentListener(new FragmentListener() {
             @Override
             public void onItemClick(String value) {
+                // do something ...
                 Toast.makeText(MainActivity.this, value, Toast.LENGTH_SHORT).show();
             }
         });
@@ -205,6 +247,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Pass the data list from MainActivity to SearchFragment
+     */
+    private void passDataToSearchFragment() {
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("data_list", dataList);
+        searchFragment.setArguments(bundle);
+    }
+
+    /**
      * Handle navigation menu items click
      */
     private void setNavigationItemSelected() {
@@ -214,21 +265,32 @@ public class MainActivity extends AppCompatActivity {
                 int item = menuItem.getItemId();
 
                 switch (item) {
+
+                    // Call intent to SettingActivity
                     case R.id.navigation_setting:
                         Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                         startActivity(intent);
+                        overridePendingTransition(R.anim.enter_animation, R.anim.exit_animation);
                         break;
+
+                    // Call FavoriteFragment
                     case R.id.navigation_favorite:
                         setViewVisibility(true);
                         goToFragment(favoritesFragment);
                         break;
+
+                    // Call HistoryFragment
                     case R.id.navigation_history:
                         setViewVisibility(true);
                         goToFragment(historyFragment);
                         break;
+
+                    // Call HelpFragment
                     case R.id.navigation_help:
                         Toast.makeText(MainActivity.this, "Help", Toast.LENGTH_SHORT).show();
                         break;
+
+                    // Call AboutFragment
                     case R.id.navigation_about:
                         Toast.makeText(MainActivity.this, "About", Toast.LENGTH_SHORT).show();
                         break;
@@ -257,7 +319,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                searchFragment.filterValue(charSequence.toString());
+                searchFragment.filterSearch(charSequence.toString());
             }
 
             @Override
@@ -278,12 +340,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSearchStateChanged(boolean enabled) {
                 // Get current fragment
-                Fragment currFragment = getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer);
+                Fragment currFragment = getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainerGeneral);
 
                 // If search is enabled -> switch current fragment to SearchFragment and display SearchFragment
                 // else display app's logo and prompt
                 if (enabled) {
-                    if (!(currFragment instanceof  SearchFragment)) {
+                    if (!(currFragment instanceof SearchFragment)) {
                         goToFragment(searchFragment);
                     }
                     setViewVisibility(true);
@@ -294,17 +356,31 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSearchConfirmed(CharSequence text) {
+                String search_word = text.toString();
 
+                // Call intent and pass the searching word to DetailActivity
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("search_word", search_word);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_animation, R.anim.exit_animation);
             }
 
             @Override
             public void onButtonClicked(int buttonCode) {
                 switch (buttonCode) {
+
                     case MaterialSearchBar.BUTTON_NAVIGATION:
+                        // Open navigation drawer
                         drawerLayout.openDrawer(GravityCompat.START);
                         navigationView.bringToFront();
                         break;
+
                     case MaterialSearchBar.BUTTON_SPEECH:
+                        // Call speech intent
+                        Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                        speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, R.string.speech_recognizer);
+                        startActivityForResult(speechIntent, Constants.REQUEST_SPEECH_RECOGNIZER);
                         break;
                 }
             }
@@ -316,17 +392,28 @@ public class MainActivity extends AppCompatActivity {
      * @param fragment
      */
     private void goToFragment(Fragment fragment) {
-        // Remove previous fragment
-        if (getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer) != null) {
+        // Remove previous fragment (if any)
+        if (getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainerGeneral) != null) {
             getSupportFragmentManager().beginTransaction()
-                    .remove(getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainer))
+                    .remove(getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainerGeneral))
                     .commit();
         }
 
         // Replace by another fragment
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.frameLayoutContainer, fragment)
+                .replace(R.id.frameLayoutContainerGeneral, fragment)
                 .commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        // Get text from speech
+        if (requestCode == Constants.REQUEST_SPEECH_RECOGNIZER && resultCode == RESULT_OK && data != null) {
+            ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            searchBar.setText(matches.get(0));
+        }
+
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     @Override

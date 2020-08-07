@@ -82,7 +82,7 @@ public class HistoryFragment extends Fragment {
                 if (!historyList.isEmpty()) {
                     historyList.clear();
                     arrayAdapter.notifyDataSetChanged();
-                    Toast.makeText(getContext(), "History is removed successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Clear all recent words", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(getContext(), "Empty list", Toast.LENGTH_SHORT).show();
                 }

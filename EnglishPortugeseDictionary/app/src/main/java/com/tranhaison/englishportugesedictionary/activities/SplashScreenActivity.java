@@ -14,12 +14,12 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.tranhaison.englishportugesedictionary.Constants;
 import com.tranhaison.englishportugesedictionary.R;
 
 public class SplashScreenActivity extends AppCompatActivity {
 
-    private static final int SPLASH_SCREEN = 5000;
-
+    // Init Animations and Views
     Animation topAnim, bottomAnim;
     ImageView imageViewAppLogo;
     TextView textViewAppName, textViewSlogan;
@@ -64,6 +64,6 @@ public class SplashScreenActivity extends AppCompatActivity {
                 finish();
 
             }
-        }, SPLASH_SCREEN);
+        }, Constants.SPLASH_SCREEN_TIMER);
     }
 }

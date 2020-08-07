@@ -18,7 +18,7 @@
         android:transitionName="app_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" tools:targetApi="lollipop"/>
 
     <TextView
         android:id="@+id/textViewAppName"
@@ -30,12 +30,12 @@
         android:transitionName="app_name"
         android:fontFamily="@font/bangers"
         android:includeFontPadding="false"
-        android:text="@string/portugese_dictionary"
+        android:text="@string/portuguese_dictionary"
         android:textAlignment="center"
         android:textSize="45sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewAppLogo" />
+        app:layout_constraintTop_toBottomOf="@+id/imageViewAppLogo" tools:targetApi="lollipop"/>
 
     <TextView
         android:id="@+id/textViewSlogan"

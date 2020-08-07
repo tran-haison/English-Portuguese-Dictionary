@@ -1,4 +1,4 @@
-package com.tranhaison.englishportugesedictionary;
+package com.tranhaison.englishportugesedictionary.adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -8,15 +8,18 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.tranhaison.englishportugesedictionary.R;
 import com.tranhaison.englishportugesedictionary.interfaces.ListItemListener;
 
 import java.util.ArrayList;
 
 public class FavoriteAdapter extends BaseAdapter {
 
+    // Init Fragment listener
     private ListItemListener listItemListener;
-    private ListItemListener listItemButtonDelete;
+    private ListItemListener listItemDeleteListener;
 
+    // Init global variables
     private Context context;
     private ArrayList<String> wordsList;
 
@@ -68,20 +71,23 @@ public class FavoriteAdapter extends BaseAdapter {
         // Set text to tvFavoriteWord
         String favorite_word = wordsList.get(position);
         viewHolder.tvFavoriteWord.setText(favorite_word);
-        viewHolder.ibDelete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (listItemButtonDelete != null) {
-                    listItemButtonDelete.onItemClick(position);
-                }
-            }
-        });
 
+        // tvFavoriteWord clicked
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (listItemListener != null) {
                     listItemListener.onItemClick(position);
+                }
+            }
+        });
+
+        // ibDelete clicked
+        viewHolder.ibDelete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (listItemDeleteListener != null) {
+                    listItemDeleteListener.onItemClick(position);
                 }
             }
         });
@@ -102,6 +108,14 @@ public class FavoriteAdapter extends BaseAdapter {
      * @param listItemListener
      */
     public void setOnItemDeleteClick(ListItemListener listItemListener) {
-        this.listItemButtonDelete = listItemListener;
+        this.listItemDeleteListener = listItemListener;
+    }
+
+    /**
+     * Remove a word from list of favorites
+     * @param position
+     */
+    public void removeWord(int position) {
+        wordsList.remove(position);
     }
 }

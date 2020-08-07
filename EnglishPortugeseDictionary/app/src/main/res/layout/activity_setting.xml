@@ -13,7 +13,7 @@
         android:background="#fdcd67">
 
         <ImageButton
-            android:id="@+id/imageButtonBack"
+            android:id="@+id/ibBack"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@drawable/ic_back_24dp"
@@ -25,11 +25,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@id/imageButtonBack"
-            android:fontFamily="@font/antic"
+            android:layout_toEndOf="@id/ibBack"
             android:text="@string/settings"
-            android:textSize="22sp"
-            android:textStyle="bold"/>
+            android:textSize="22sp" />
 
     </RelativeLayout>
 

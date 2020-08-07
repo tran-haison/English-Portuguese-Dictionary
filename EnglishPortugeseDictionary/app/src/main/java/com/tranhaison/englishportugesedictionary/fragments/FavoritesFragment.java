@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.tranhaison.englishportugesedictionary.FavoriteAdapter;
+import com.tranhaison.englishportugesedictionary.adapters.FavoriteAdapter;
 import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.interfaces.ListItemListener;
 import com.tranhaison.englishportugesedictionary.R;
@@ -26,7 +26,7 @@ public class FavoritesFragment extends Fragment {
     FavoriteAdapter favoriteAdapter;
     ArrayList<String> wordList;
 
-    // Init Fragment
+    // Init Fragment listener
     private FragmentListener fragmentListener;
 
     public FavoritesFragment() {
@@ -49,29 +49,32 @@ public class FavoritesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Get all favorite words then load into List View
-        lisViewFavorites = view.findViewById(R.id.lisViewFavorites);
+        // Init a list of all favorite words
         wordList = new ArrayList<>();
-        favoriteAdapter = new FavoriteAdapter(getContext(), wordList);
+        wordList = getWords();
+
+        // Set Adapter to List View
+        lisViewFavorites = view.findViewById(R.id.lisViewFavorites);
+        favoriteAdapter = new FavoriteAdapter(getActivity(), wordList);
         lisViewFavorites.setAdapter(favoriteAdapter);
 
-        wordList = addWords();
-        favoriteAdapter.notifyDataSetChanged();
-
+        // List View's item clicked
         favoriteAdapter.setOnItemClick(new ListItemListener() {
             @Override
             public void onItemClick(int position) {
                 if (fragmentListener != null) {
-                    fragmentListener.onItemClick((String) favoriteAdapter.getItem(position));
+                    fragmentListener.onItemClick(String.valueOf(favoriteAdapter.getItem(position)));
                 }
             }
         });
 
+        // List View's item removed from list of favorite
         favoriteAdapter.setOnItemDeleteClick(new ListItemListener() {
             @Override
             public void onItemClick(int position) {
-                String value = (String) favoriteAdapter.getItem(position);
-                Toast.makeText(getContext(), value + " item is deleted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(), favoriteAdapter.getItem(position) + " is removed from favorites", Toast.LENGTH_SHORT).show();
+                favoriteAdapter.removeWord(position);
+                favoriteAdapter.notifyDataSetChanged();
             }
         });
     }
@@ -88,7 +91,7 @@ public class FavoritesFragment extends Fragment {
      * Get a List of favorite words in db
      * @return
      */
-    private ArrayList<String> addWords() {
+    public ArrayList<String> getWords() {
         ArrayList<String> favorite_list = new ArrayList<>();
         favorite_list.add("hello");
         favorite_list.add("how");

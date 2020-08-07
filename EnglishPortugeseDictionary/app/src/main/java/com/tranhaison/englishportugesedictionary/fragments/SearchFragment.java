@@ -17,7 +17,6 @@ import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class SearchFragment extends Fragment {
 
@@ -51,7 +50,9 @@ public class SearchFragment extends Fragment {
 
         // Init search array list
         searchList = new ArrayList<>();
-        searchList = getSearchList();
+
+        // Get data list from MainActivity
+        getDataSource();
 
         // Set adapter to List View
         listViewSearch = view.findViewById(R.id.listViewSearch);
@@ -78,36 +79,37 @@ public class SearchFragment extends Fragment {
 
     /**
      * Get the list of words start with @value and set to List View
-     * @param value
+     * @param word
      */
-    public void filterValue(String value) {
-        arrayAdapter.getFilter().filter(value);
-        int size = arrayAdapter.getCount();
+    public void filterSearch(String word) {
+        //arrayAdapter.getFilter().filter(word);
+
+        int size = searchList.size();
         for (int i=0; i<size; i++) {
-            if (arrayAdapter.getItem(i).startsWith(value)) {
+            if (arrayAdapter.getItem(i).startsWith(word)) {
                 listViewSearch.setSelection(i);
                 break;
             }
         }
     }
+
     /**
-     * Return a list of all words
-     * @return
+     * Get data source from MainActivity
      */
-    public ArrayList<String> getSearchList() {
-        String[] list = new String[] {
-                "a",
-                "abc",
-                "abandon",
-                "about",
-                "above",
-                "abuse"
-        };
+    public void getDataSource() {
+        Bundle bundle = getArguments();
+        if (bundle != null) {
+            searchList = bundle.getStringArrayList("data_list");
+        }
+    }
 
-        ArrayList<String> wordList = new ArrayList<>();
-        wordList.addAll(Arrays.asList(list));
-
-        return wordList;
+    /**
+     * Reset data source
+     */
+    public void resetDataSource() {
+        getDataSource();
+        arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, searchList);
+        listViewSearch.setAdapter(arrayAdapter);
     }
 
 }
