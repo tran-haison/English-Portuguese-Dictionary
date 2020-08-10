@@ -24,10 +24,15 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.mancj.materialsearchbar.MaterialSearchBar;
+import com.tranhaison.englishportugesedictionary.DictionaryWord;
+import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
+import com.tranhaison.englishportugesedictionary.databases.LoadDatabase;
+import com.tranhaison.englishportugesedictionary.fragments.AboutFragment;
 import com.tranhaison.englishportugesedictionary.Constants;
 import com.tranhaison.englishportugesedictionary.DictionaryState;
 import com.tranhaison.englishportugesedictionary.DictionaryDataType;
-import com.tranhaison.englishportugesedictionary.fragments.FavoritesFragment;
+import com.tranhaison.englishportugesedictionary.fragments.HelpFragment;
+import com.tranhaison.englishportugesedictionary.fragments.FavoriteFragment;
 import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.fragments.HistoryFragment;
 import com.tranhaison.englishportugesedictionary.R;
@@ -47,13 +52,19 @@ public class MainActivity extends AppCompatActivity {
     Button btnDictionaryType;
 
     // Init Fragments
-    FavoritesFragment favoritesFragment;
+    FavoriteFragment favoriteFragment;
     HistoryFragment historyFragment;
     SearchFragment searchFragment;
+    HelpFragment helpFragment;
+    AboutFragment aboutFragment;
+
+    // Init Database Helper and Adapter
+    DatabaseHelper databaseHelper;
+    DictionaryDataType dictionaryDataType;
 
     // Init variables to hold current dictionary type (default = ENG - POR)
     private int dictionary_type = Constants.ENG_POR;
-    private ArrayList<String> dataList;
+    private ArrayList<DictionaryWord> suggestionList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,14 +75,18 @@ public class MainActivity extends AppCompatActivity {
         // Map Views from layout file
         mapViews();
 
+        // Init Database
+        initDatabase();
+
         // Get the latest dictionary state
         getLatestState();
 
         // Init and handle Fragments's event
         initFragments();
         handleFragmentsEvent();
+
         // Pass data list to Search Fragment when user first open the app
-        passDataToSearchFragment();
+        //passDataToSearchFragment();
 
         // Handle events for Views and Menu
         showPopUpMenu();
@@ -94,14 +109,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Open database if already exists
+     * else create a new database
+     */
+    private void initDatabase() {
+        databaseHelper = new DatabaseHelper(this);
+
+        // If the database already exists -> open it
+        // else create new database and open it
+        if (databaseHelper.checkDatabase()) {
+            databaseHelper.openDatabase();
+        } else {
+            LoadDatabase loadDatabase = new LoadDatabase(this, databaseHelper);
+            loadDatabase.execute();
+        }
+    }
+
+    /**
      * Get instances of Fragments
      * Put 1st Fragment into stack
      * Set visibility to Fragment and Views
      */
     private void initFragments() {
-        favoritesFragment = new FavoritesFragment();
+        favoriteFragment = new FavoriteFragment();
         historyFragment = new HistoryFragment();
         searchFragment = new SearchFragment();
+        helpFragment = new HelpFragment();
+        aboutFragment = new AboutFragment();
 
         // Search Fragment will be put into Fragment stack first
         goToFragment(searchFragment);
@@ -115,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void getLatestState() {
         String value = DictionaryState.getState(this, Constants.DICTIONARY_TYPE);
+        dictionaryDataType = new DictionaryDataType(databaseHelper);
 
         // Get the latest state of dictionary type and load correspond data
         if (value != null) {
@@ -123,16 +158,16 @@ public class MainActivity extends AppCompatActivity {
             // Set text to btnDictionaryType and load data depend on dictionary_type
             if (dictionary_type == Constants.ENG_POR) {
                 btnDictionaryType.setText(R.string.e_p);
-                dataList = DictionaryDataType.getEngPor();
+                //dataList = dictionaryDataType.getEngPor();
             } else if (dictionary_type == Constants.POR_ENG) {
                 btnDictionaryType.setText(R.string.p_e);
-                dataList = DictionaryDataType.getPorEng();
+                //dataList = dictionaryDataType.getPorEng();
             }
         } else {
             // Default dictionary type
             dictionary_type = Constants.ENG_POR;
             btnDictionaryType.setText(R.string.e_p);
-            dataList = DictionaryDataType.getEngPor();
+            //dataList = dictionaryDataType.getEngPor();
         }
     }
 
@@ -173,8 +208,8 @@ public class MainActivity extends AppCompatActivity {
                                 btnDictionaryType.setText(R.string.e_p);
 
                                 // Get English - Portuguese data source
-                                dataList = DictionaryDataType.getEngPor();
-                                passDataToSearchFragment();
+                                //dataList = dictionaryDataType.getEngPor();
+                                //passDataToSearchFragment();
 
                                 // Reset data source of SearchFragment
                                 if (current_fragment instanceof SearchFragment) {
@@ -195,8 +230,8 @@ public class MainActivity extends AppCompatActivity {
                                 btnDictionaryType.setText(R.string.p_e);
 
                                 // Get Portuguese - English data source
-                                dataList = DictionaryDataType.getPorEng();
-                                passDataToSearchFragment();
+                                //dataList = dictionaryDataType.getPorEng();
+                                //passDataToSearchFragment();
 
                                 // Reset data source of SearchFragment
                                 if (current_fragment instanceof SearchFragment) {
@@ -226,15 +261,16 @@ public class MainActivity extends AppCompatActivity {
         searchFragment.setOnFragmentListener(new FragmentListener() {
             @Override
             public void onItemClick(String value) {
-                // do something ...
-                Toast.makeText(MainActivity.this, value, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+                intent.putExtra("search_word", value);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_animation, R.anim.exit_animation);
             }
         });
 
-        favoritesFragment.setOnFragmentListener(new FragmentListener() {
+        favoriteFragment.setOnFragmentListener(new FragmentListener() {
             @Override
             public void onItemClick(String value) {
-                Toast.makeText(MainActivity.this, value, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -251,8 +287,28 @@ public class MainActivity extends AppCompatActivity {
      */
     private void passDataToSearchFragment() {
         Bundle bundle = new Bundle();
-        bundle.putStringArrayList("data_list", dataList);
+        bundle.putSerializable("suggestion_list", suggestionList);
         searchFragment.setArguments(bundle);
+    }
+
+    /**
+     * Get the list of History and pass to HistoryFragment
+     */
+    private void passDataToHistoryFragment() {
+        ArrayList<DictionaryWord> historyList = databaseHelper.getAllHistory();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("history_list", historyList);
+        historyFragment.setArguments(bundle);
+    }
+
+    /**
+     * Get a list of Favorite and pass to FavoriteFragment
+     */
+    private void passDataToFavoriteFragment() {
+        ArrayList<DictionaryWord> favoriteList = databaseHelper.getAllFavorite();
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("favorite_list", favoriteList);
+        favoriteFragment.setArguments(bundle);
     }
 
     /**
@@ -276,23 +332,27 @@ public class MainActivity extends AppCompatActivity {
                     // Call FavoriteFragment
                     case R.id.navigation_favorite:
                         setViewVisibility(true);
-                        goToFragment(favoritesFragment);
+                        passDataToFavoriteFragment();
+                        goToFragment(favoriteFragment);
                         break;
 
                     // Call HistoryFragment
                     case R.id.navigation_history:
                         setViewVisibility(true);
+                        passDataToHistoryFragment();
                         goToFragment(historyFragment);
                         break;
 
                     // Call HelpFragment
                     case R.id.navigation_help:
-                        Toast.makeText(MainActivity.this, "Help", Toast.LENGTH_SHORT).show();
+                        setViewVisibility(true);
+                        goToFragment(helpFragment);
                         break;
 
                     // Call AboutFragment
                     case R.id.navigation_about:
-                        Toast.makeText(MainActivity.this, "About", Toast.LENGTH_SHORT).show();
+                        setViewVisibility(true);
+                        goToFragment(aboutFragment);
                         break;
                 }
 
@@ -319,7 +379,21 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                searchFragment.filterSearch(charSequence.toString());
+                String word = charSequence.toString();
+
+                if (word.isEmpty()) {
+                    setViewVisibility(false);
+                } else {
+                    // Get suggestion list and pass to SearchFragment
+                    suggestionList = databaseHelper.getSuggestions(word);
+                    passDataToSearchFragment();
+
+                    // Reset suggestion source
+                    searchFragment.resetDataSource();
+
+                    setViewVisibility(true);
+                }
+                //searchFragment.filterSearch(charSequence.toString());
             }
 
             @Override
@@ -339,7 +413,7 @@ public class MainActivity extends AppCompatActivity {
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
             public void onSearchStateChanged(boolean enabled) {
-                // Get current fragment
+                /*// Get current fragment
                 Fragment currFragment = getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainerGeneral);
 
                 // If search is enabled -> switch current fragment to SearchFragment and display SearchFragment
@@ -351,7 +425,7 @@ public class MainActivity extends AppCompatActivity {
                     setViewVisibility(true);
                 } else {
                     setViewVisibility(false);
-                }
+                }*/
             }
 
             @Override

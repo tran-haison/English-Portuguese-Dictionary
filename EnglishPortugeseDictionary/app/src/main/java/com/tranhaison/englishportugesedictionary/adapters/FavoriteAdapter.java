@@ -8,6 +8,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.tranhaison.englishportugesedictionary.DictionaryWord;
 import com.tranhaison.englishportugesedictionary.R;
 import com.tranhaison.englishportugesedictionary.interfaces.ListItemListener;
 
@@ -21,21 +22,21 @@ public class FavoriteAdapter extends BaseAdapter {
 
     // Init global variables
     private Context context;
-    private ArrayList<String> wordsList;
+    private ArrayList<DictionaryWord> favoriteList;
 
-    public FavoriteAdapter(Context context, ArrayList<String> wordsList) {
+    public FavoriteAdapter(Context context, ArrayList<DictionaryWord> favoriteList) {
         this.context = context;
-        this.wordsList = wordsList;
+        this.favoriteList = favoriteList;
     }
 
     @Override
     public int getCount() {
-        return wordsList.size();
+        return favoriteList.size();
     }
 
     @Override
     public Object getItem(int i) {
-        return wordsList.get(i);
+        return favoriteList.get(i);
     }
 
     @Override
@@ -44,8 +45,8 @@ public class FavoriteAdapter extends BaseAdapter {
     }
 
     private class ViewHolder {
-        TextView tvFavoriteWord;
-        ImageButton ibDelete;
+        TextView tvFavoriteWord, tvFavoriteDefinition;
+        ImageButton ibFavoriteDelete;
     }
 
     @Override
@@ -62,15 +63,21 @@ public class FavoriteAdapter extends BaseAdapter {
             // Map Views and set tag to view
             viewHolder = new ViewHolder();
             viewHolder.tvFavoriteWord = view.findViewById(R.id.tvFavoriteWord);
-            viewHolder.ibDelete = view.findViewById(R.id.ibDelete);
+            viewHolder.tvFavoriteDefinition = view.findViewById(R.id.tvFavoriteDefinition);
+            viewHolder.ibFavoriteDelete = view.findViewById(R.id.ibFavoriteDelete);
             view.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) view.getTag();
         }
 
-        // Set text to tvFavoriteWord
-        String favorite_word = wordsList.get(position);
-        viewHolder.tvFavoriteWord.setText(favorite_word);
+        // Get favorite word and definition
+        DictionaryWord favoriteWord = favoriteList.get(position);
+        String word = favoriteWord.getWord();
+        String definition = favoriteWord.getDefinition();
+
+        // Set text to text view
+        viewHolder.tvFavoriteWord.setText(word);
+        viewHolder.tvFavoriteDefinition.setText(definition);
 
         // tvFavoriteWord clicked
         view.setOnClickListener(new View.OnClickListener() {
@@ -83,7 +90,7 @@ public class FavoriteAdapter extends BaseAdapter {
         });
 
         // ibDelete clicked
-        viewHolder.ibDelete.setOnClickListener(new View.OnClickListener() {
+        viewHolder.ibFavoriteDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (listItemDeleteListener != null) {
@@ -116,6 +123,6 @@ public class FavoriteAdapter extends BaseAdapter {
      * @param position
      */
     public void removeWord(int position) {
-        wordsList.remove(position);
+        favoriteList.remove(position);
     }
 }

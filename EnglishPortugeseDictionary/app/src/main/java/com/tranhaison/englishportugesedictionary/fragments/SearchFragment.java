@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.tranhaison.englishportugesedictionary.DictionaryWord;
 import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.R;
 
@@ -24,6 +25,7 @@ public class SearchFragment extends Fragment {
     ListView listViewSearch;
     ArrayAdapter<String> arrayAdapter;
     ArrayList<String> searchList;
+    ArrayList<DictionaryWord> suggestionList;
 
     // Init fragment listener to pass argument to Main Activity
     private FragmentListener fragmentListener;
@@ -48,8 +50,9 @@ public class SearchFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Init search array list
+        // Init array list
         searchList = new ArrayList<>();
+        suggestionList = new ArrayList<>();
 
         // Get data list from MainActivity
         getDataSource();
@@ -81,7 +84,7 @@ public class SearchFragment extends Fragment {
      * Get the list of words start with @value and set to List View
      * @param word
      */
-    public void filterSearch(String word) {
+   /* public void filterSearch(String word) {
         //arrayAdapter.getFilter().filter(word);
 
         int size = searchList.size();
@@ -91,7 +94,7 @@ public class SearchFragment extends Fragment {
                 break;
             }
         }
-    }
+    }*/
 
     /**
      * Get data source from MainActivity
@@ -99,7 +102,18 @@ public class SearchFragment extends Fragment {
     public void getDataSource() {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            searchList = bundle.getStringArrayList("data_list");
+            suggestionList = (ArrayList<DictionaryWord>) bundle.getSerializable("suggestion_list");
+        }
+        convertToStringArrayList();
+    }
+
+    /**
+     * Get a list of word only from data_list to search list
+     */
+    public void convertToStringArrayList() {
+        for (DictionaryWord dictionaryWord : suggestionList) {
+            String word = dictionaryWord.getWord();
+            searchList.add(word);
         }
     }
 
@@ -107,6 +121,11 @@ public class SearchFragment extends Fragment {
      * Reset data source
      */
     public void resetDataSource() {
+        // Clear lists
+        suggestionList.clear();
+        searchList.clear();
+
+        // Get new data source and display with list view
         getDataSource();
         arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, searchList);
         listViewSearch.setAdapter(arrayAdapter);

@@ -17,7 +17,10 @@ import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.tranhaison.englishportugesedictionary.Constants;
-import com.tranhaison.englishportugesedictionary.WordAdapter;
+import com.tranhaison.englishportugesedictionary.DictionaryWord;
+import com.tranhaison.englishportugesedictionary.adapters.WordAdapter;
+import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
+import com.tranhaison.englishportugesedictionary.databases.LoadDatabase;
 import com.tranhaison.englishportugesedictionary.fragments.ExampleFragment;
 import com.tranhaison.englishportugesedictionary.R;
 import com.tranhaison.englishportugesedictionary.adapters.ViewPagerAdapter;
@@ -37,7 +40,7 @@ public class DetailActivity extends AppCompatActivity {
 
     // Init Adapter
     ViewPagerAdapter viewPagerAdapter;
-    WordAdapter wordAdapter;
+    DatabaseHelper databaseHelper;
 
     // Init Fragments
     DefinitionFragment definitionFragment;
@@ -53,6 +56,9 @@ public class DetailActivity extends AppCompatActivity {
 
         // Map Views from layout file
         mapViews();
+
+        // Open database
+        initDatabase();
 
         // Init Fragments
         initFragments();
@@ -84,6 +90,23 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     /**
+     * Open database if already exists
+     * else create a new database
+     */
+    private void initDatabase() {
+        databaseHelper = new DatabaseHelper(this);
+
+        // If the database already exists -> open it
+        // else create new database and open it
+        if (databaseHelper.checkDatabase()) {
+            databaseHelper.openDatabase();
+        } else {
+            LoadDatabase loadDatabase = new LoadDatabase(this, databaseHelper);
+            loadDatabase.execute();
+        }
+    }
+
+    /**
      * Init new Fragments and set default fragment to DefinitionFragment
      */
     private void initFragments() {
@@ -104,9 +127,9 @@ public class DetailActivity extends AppCompatActivity {
 
         // Add Fragments
         viewPagerAdapter.addFragment(definitionFragment, "Definition");
+        viewPagerAdapter.addFragment(exampleFragment, "Example");
         viewPagerAdapter.addFragment(synonymFragment, "Synonym");
         viewPagerAdapter.addFragment(antonymFragment, "Antonym");
-        viewPagerAdapter.addFragment(exampleFragment, "Example");
 
         // Adapter setup
         viewPagerContainer.setAdapter(viewPagerAdapter);
@@ -122,20 +145,28 @@ public class DetailActivity extends AppCompatActivity {
 
         String word = intent.getStringExtra("search_word");
         if (word != null) {
-            // Add a word to list of recent words
-            addToHistory(word);
-
-            // Set text to etSearch
+            // Set word to etSearch
             etSearch.setText(word);
 
-            // Set image to ibFavorite
-            if (wordAdapter.isFavorite(word)) {
-                ibFavorite.setImageResource(R.drawable.ic_favorite_red_24dp);
-            } else {
-                ibFavorite.setImageResource(R.drawable.ic_favorite_border_24dp);
-            }
+            DictionaryWord dictionaryWord = databaseHelper.getWord(word);
 
-            return word;
+            if (dictionaryWord != null) {
+                // Add a word to list of recent words
+                databaseHelper.insertHistory(dictionaryWord);
+
+                // Check to see if this word is already in list of Favorite
+                // then set ivFavorite to the corresponding state
+                DictionaryWord isFavoriteWord = databaseHelper.getFavorite(word);
+                if (isFavoriteWord != null) {
+                    ibFavorite.setImageResource(R.drawable.ic_favorite_red_24dp);
+                } else {
+                    ibFavorite.setImageResource(R.drawable.ic_favorite_border_24dp);
+                }
+
+                return word;
+            } else {
+                return null;
+            }
         } else {
             return null;
         }
@@ -186,37 +217,25 @@ public class DetailActivity extends AppCompatActivity {
         ibFavorite.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (word.isEmpty()) {
-                    Toast.makeText(DetailActivity.this, "Nothing can be added", Toast.LENGTH_SHORT).show();
+                if (word == null) {
+                    Toast.makeText(DetailActivity.this, "Cannot add a meaningless word", Toast.LENGTH_SHORT).show();
                 } else {
+                    DictionaryWord isFavoriteWord = databaseHelper.getFavorite(word);
                     // If a word is already in Favorite -> remove
-                    // else add to list favorite words
-                    if (WordAdapter.isFavorite(word)) {
-                        WordAdapter.removeFromFavorite(word);
+                    // else add to list of favorite words
+                    if (isFavoriteWord != null) {
+                        databaseHelper.deleteFavorite(word);
                         ibFavorite.setImageResource(R.drawable.ic_favorite_border_24dp);
                         Toast.makeText(DetailActivity.this, word + " is removed from Favorite", Toast.LENGTH_SHORT).show();
                     } else {
-                        WordAdapter.addToFavorite(word);
+                        DictionaryWord dictionaryWord = databaseHelper.getWord(word);
+                        databaseHelper.insertFavorite(dictionaryWord);
                         ibFavorite.setImageResource(R.drawable.ic_favorite_red_24dp);
                         Toast.makeText(DetailActivity.this, word + " is added to Favorite", Toast.LENGTH_SHORT).show();
                     }
                 }
             }
         });
-    }
-
-    /**
-     * Add a word to list of recent words
-     * @param word
-     */
-    private void addToHistory(String word) {
-        // If a word is already in History -> do nothing
-        // else add to list of recent words
-        if (WordAdapter.isHistory(word)) {
-            return;
-        } else {
-            WordAdapter.addToHistory(word);
-        }
     }
 
     /**

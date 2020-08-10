@@ -103,14 +103,12 @@ public class DatabaseAdapter {
      */
     public long addWordToFavorite(DictionaryWord dictionaryWord) {
         String word = dictionaryWord.getWord();
-        String content = dictionaryWord.getContent();
+        String content = dictionaryWord.getDefinition();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_FAVORITE_WORD, word);
         contentValues.put(KEY_FAVORITE_CONTENT, content);
-        long isAdded = database.insert(TABLE_FAVORITE, null, contentValues);
-
-        return isAdded;
+        return database.insert(TABLE_FAVORITE, null, contentValues);
     }
 
     /**
@@ -163,7 +161,7 @@ public class DatabaseAdapter {
 
             DictionaryWord dictionaryWord = new DictionaryWord();
             dictionaryWord.setWord(cursor.getString(0));
-            dictionaryWord.setContent(cursor.getString(1));
+            dictionaryWord.setDefinition(cursor.getString(1));
 
             return dictionaryWord;
         } else {
@@ -191,7 +189,7 @@ public class DatabaseAdapter {
             do {
                 DictionaryWord dictionaryWord = new DictionaryWord();
                 dictionaryWord.setWord(cursor.getString(0));
-                dictionaryWord.setContent(cursor.getString(1));
+                dictionaryWord.setDefinition(cursor.getString(1));
                 favoriteList.add(dictionaryWord);
             } while (cursor.moveToNext());
         }
@@ -206,14 +204,12 @@ public class DatabaseAdapter {
      */
     public long addWordToHistory(DictionaryWord dictionaryWord) {
         String word = dictionaryWord.getWord();
-        String content = dictionaryWord.getContent();
+        String content = dictionaryWord.getDefinition();
 
         ContentValues contentValues = new ContentValues();
         contentValues.put(KEY_HISTORY_WORD, word);
         contentValues.put(KEY_HISTORY_CONTENT, content);
-        long isAdded = database.insert(TABLE_HISTORY, null, contentValues);
-
-        return isAdded;
+        return database.insert(TABLE_HISTORY, null, contentValues);
     }
 
     /**
@@ -266,7 +262,7 @@ public class DatabaseAdapter {
 
             DictionaryWord dictionaryWord = new DictionaryWord();
             dictionaryWord.setWord(cursor.getString(0));
-            dictionaryWord.setContent(cursor.getString(1));
+            dictionaryWord.setDefinition(cursor.getString(1));
 
             return dictionaryWord;
         } else {
@@ -294,7 +290,7 @@ public class DatabaseAdapter {
             do {
                 DictionaryWord dictionaryWord = new DictionaryWord();
                 dictionaryWord.setWord(cursor.getString(0));
-                dictionaryWord.setContent(cursor.getString(1));
+                dictionaryWord.setDefinition(cursor.getString(1));
                 historyList.add(dictionaryWord);
             } while (cursor.moveToNext());
         }
