@@ -1,4 +1,4 @@
-package com.tranhaison.englishportugesedictionary.fragments;
+package com.tranhaison.englishportugesedictionary.fragments.mainactivity;
 
 import android.os.Bundle;
 
@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 
 import com.tranhaison.englishportugesedictionary.R;
 
-public class SynonymFragment extends Fragment {
+public class HelpFragment extends Fragment {
 
-    public SynonymFragment() {
+    public HelpFragment() {
         // Required empty public constructor
     }
 
@@ -25,6 +25,6 @@ public class SynonymFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_synonym, container, false);
+        return inflater.inflate(R.layout.fragment_help, container, false);
     }
 }

@@ -20,23 +20,22 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.tranhaison.englishportugesedictionary.DictionaryWord;
 import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
 import com.tranhaison.englishportugesedictionary.databases.LoadDatabase;
-import com.tranhaison.englishportugesedictionary.fragments.AboutFragment;
+import com.tranhaison.englishportugesedictionary.fragments.mainactivity.AboutFragment;
 import com.tranhaison.englishportugesedictionary.Constants;
 import com.tranhaison.englishportugesedictionary.DictionaryState;
 import com.tranhaison.englishportugesedictionary.DictionaryDataType;
-import com.tranhaison.englishportugesedictionary.fragments.HelpFragment;
-import com.tranhaison.englishportugesedictionary.fragments.FavoriteFragment;
+import com.tranhaison.englishportugesedictionary.fragments.mainactivity.HelpFragment;
+import com.tranhaison.englishportugesedictionary.fragments.mainactivity.FavoriteFragment;
 import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
-import com.tranhaison.englishportugesedictionary.fragments.HistoryFragment;
+import com.tranhaison.englishportugesedictionary.fragments.mainactivity.HistoryFragment;
 import com.tranhaison.englishportugesedictionary.R;
-import com.tranhaison.englishportugesedictionary.fragments.SearchFragment;
+import com.tranhaison.englishportugesedictionary.fragments.mainactivity.SearchFragment;
 
 import java.util.ArrayList;
 
@@ -261,23 +260,21 @@ public class MainActivity extends AppCompatActivity {
         searchFragment.setOnFragmentListener(new FragmentListener() {
             @Override
             public void onItemClick(String value) {
-                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                intent.putExtra("search_word", value);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_animation, R.anim.exit_animation);
+                goToDetailActivity(value);
             }
         });
 
         favoriteFragment.setOnFragmentListener(new FragmentListener() {
             @Override
             public void onItemClick(String value) {
+                goToDetailActivity(value);
             }
         });
 
         historyFragment.setOnFragmentListener(new FragmentListener() {
             @Override
             public void onItemClick(String value) {
-                Toast.makeText(MainActivity.this, value, Toast.LENGTH_SHORT).show();
+                goToDetailActivity(value);
             }
         });
     }
@@ -431,12 +428,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSearchConfirmed(CharSequence text) {
                 String search_word = text.toString();
-
-                // Call intent and pass the searching word to DetailActivity
-                Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-                intent.putExtra("search_word", search_word);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_animation, R.anim.exit_animation);
+                goToDetailActivity(search_word);
             }
 
             @Override
@@ -479,6 +471,17 @@ public class MainActivity extends AppCompatActivity {
                 .commit();
     }
 
+    /**
+     * Call intent to Detail Activity
+     * @param word
+     */
+    private void goToDetailActivity(String word) {
+        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+        intent.putExtra("word", word);
+        startActivity(intent);
+        overridePendingTransition(R.anim.enter_animation, R.anim.exit_animation);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         // Get text from speech
@@ -496,4 +499,6 @@ public class MainActivity extends AppCompatActivity {
             drawerLayout.closeDrawer(GravityCompat.START);
         else super.onBackPressed();
     }
+
+
 }

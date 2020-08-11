@@ -18,15 +18,14 @@ import android.widget.Toast;
 import com.google.android.material.tabs.TabLayout;
 import com.tranhaison.englishportugesedictionary.Constants;
 import com.tranhaison.englishportugesedictionary.DictionaryWord;
-import com.tranhaison.englishportugesedictionary.adapters.WordAdapter;
 import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
 import com.tranhaison.englishportugesedictionary.databases.LoadDatabase;
-import com.tranhaison.englishportugesedictionary.fragments.ExampleFragment;
+import com.tranhaison.englishportugesedictionary.fragments.detailactivity.ExampleFragment;
 import com.tranhaison.englishportugesedictionary.R;
 import com.tranhaison.englishportugesedictionary.adapters.ViewPagerAdapter;
-import com.tranhaison.englishportugesedictionary.fragments.AntonymFragment;
-import com.tranhaison.englishportugesedictionary.fragments.DefinitionFragment;
-import com.tranhaison.englishportugesedictionary.fragments.SynonymFragment;
+import com.tranhaison.englishportugesedictionary.fragments.detailactivity.AntonymFragment;
+import com.tranhaison.englishportugesedictionary.fragments.detailactivity.DefinitionFragment;
+import com.tranhaison.englishportugesedictionary.fragments.detailactivity.SynonymFragment;
 
 import java.util.ArrayList;
 
@@ -67,7 +66,7 @@ public class DetailActivity extends AppCompatActivity {
         setUpViewPager();
 
         // Get a word from MainActivity
-        String word = getWordFromActivity();
+        String word = getWordFromMainActivity();
 
         // Handle events
         setSpeechRecognizer();
@@ -140,10 +139,10 @@ public class DetailActivity extends AppCompatActivity {
      * Get a word from MainActivity
      * @return
      */
-    private String getWordFromActivity() {
+    private String getWordFromMainActivity() {
         Intent intent = getIntent();
 
-        String word = intent.getStringExtra("search_word");
+        String word = intent.getStringExtra("word");
         if (word != null) {
             // Set word to etSearch
             etSearch.setText(word);

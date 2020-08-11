@@ -1,4 +1,4 @@
-package com.tranhaison.englishportugesedictionary.fragments;
+package com.tranhaison.englishportugesedictionary.fragments.mainactivity;
 
 import android.os.Bundle;
 

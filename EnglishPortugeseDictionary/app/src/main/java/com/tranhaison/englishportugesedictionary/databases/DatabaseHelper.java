@@ -168,7 +168,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor cursor = mDatabase.query(TABLE_WORDS,
                 new String[] {COLUMN_WORD, COLUMN_DEFINITION, COLUMN_EXAMPLE, COLUMN_SYNONYMS, COLUMN_ANTONYMS},
-                COLUMN_WORD + " = " + word,
+                COLUMN_WORD + " = '" + word + "'",
                 null,
                 null,
                 null,
@@ -357,7 +357,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         Cursor cursor = mDatabase.query(TABLE_FAVORITE,
                 new String[] {COLUMN_WORD, COLUMN_DEFINITION, COLUMN_EXAMPLE, COLUMN_SYNONYMS, COLUMN_ANTONYMS},
-                COLUMN_WORD + " = " + word,
+                COLUMN_WORD + " = '" + word + "'",
                 null,
                 null,
                 null,

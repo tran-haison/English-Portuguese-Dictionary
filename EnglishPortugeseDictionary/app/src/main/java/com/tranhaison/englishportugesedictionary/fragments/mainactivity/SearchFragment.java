@@ -1,4 +1,4 @@
-package com.tranhaison.englishportugesedictionary.fragments;
+package com.tranhaison.englishportugesedictionary.fragments.mainactivity;
 
 import android.os.Bundle;
 
@@ -18,6 +18,7 @@ import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.R;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class SearchFragment extends Fragment {
 
@@ -55,7 +56,7 @@ public class SearchFragment extends Fragment {
         suggestionList = new ArrayList<>();
 
         // Get data list from MainActivity
-        getDataSource();
+        getSearchList();
 
         // Set adapter to List View
         listViewSearch = view.findViewById(R.id.listViewSearch);
@@ -99,7 +100,7 @@ public class SearchFragment extends Fragment {
     /**
      * Get data source from MainActivity
      */
-    public void getDataSource() {
+    public void getSearchList() {
         Bundle bundle = getArguments();
         if (bundle != null) {
             suggestionList = (ArrayList<DictionaryWord>) bundle.getSerializable("suggestion_list");
@@ -126,8 +127,8 @@ public class SearchFragment extends Fragment {
         searchList.clear();
 
         // Get new data source and display with list view
-        getDataSource();
-        arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, searchList);
+        getSearchList();
+        arrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_list_item_1, searchList);
         listViewSearch.setAdapter(arrayAdapter);
     }
 
