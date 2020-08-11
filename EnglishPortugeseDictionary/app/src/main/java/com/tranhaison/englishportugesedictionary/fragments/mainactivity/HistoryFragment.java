@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.tranhaison.englishportugesedictionary.DictionaryWord;
+import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
 import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.R;
 
@@ -32,11 +33,14 @@ public class HistoryFragment extends Fragment {
     ArrayList<String> historyStringList;
     ArrayList<DictionaryWord> historyWordList;
 
+    // Init database helper
+    DatabaseHelper databaseHelper;
+
     // Init fragment listener to pass argument to Main Activity
     private FragmentListener fragmentListener;
 
-    public HistoryFragment() {
-        // Required empty public constructor
+    public HistoryFragment(DatabaseHelper databaseHelper) {
+        this.databaseHelper = databaseHelper;
     }
 
     @Override
@@ -86,6 +90,8 @@ public class HistoryFragment extends Fragment {
             public void onClick(View view) {
                 // Clear all words in list in case list is not empty
                 if (!historyWordList.isEmpty()) {
+                    // Delete all in History
+                    databaseHelper.deleteAllHistory();
                     historyStringList.clear();
                     historyWordList.clear();
                     arrayAdapter.notifyDataSetChanged();

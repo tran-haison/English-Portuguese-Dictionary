@@ -130,8 +130,8 @@ public class MainActivity extends AppCompatActivity {
      * Set visibility to Fragment and Views
      */
     private void initFragments() {
-        favoriteFragment = new FavoriteFragment();
-        historyFragment = new HistoryFragment();
+        favoriteFragment = new FavoriteFragment(databaseHelper);
+        historyFragment = new HistoryFragment(databaseHelper);
         searchFragment = new SearchFragment();
         helpFragment = new HelpFragment();
         aboutFragment = new AboutFragment();
@@ -410,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
         searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
             public void onSearchStateChanged(boolean enabled) {
-                /*// Get current fragment
+                // Get current fragment
                 Fragment currFragment = getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainerGeneral);
 
                 // If search is enabled -> switch current fragment to SearchFragment and display SearchFragment
@@ -422,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
                     setViewVisibility(true);
                 } else {
                     setViewVisibility(false);
-                }*/
+                }
             }
 
             @Override

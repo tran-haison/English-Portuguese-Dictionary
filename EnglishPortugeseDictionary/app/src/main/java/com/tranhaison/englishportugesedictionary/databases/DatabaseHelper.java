@@ -412,7 +412,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
      */
     public void deleteFavorite(String word) {
         mDatabase.delete(TABLE_FAVORITE,
-                COLUMN_WORD + " = " + word,
+                COLUMN_WORD + " = '" + word + "'",
                 null);
     }
 

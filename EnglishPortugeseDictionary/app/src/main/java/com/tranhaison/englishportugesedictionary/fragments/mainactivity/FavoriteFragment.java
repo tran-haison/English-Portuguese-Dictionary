@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.tranhaison.englishportugesedictionary.DictionaryWord;
 import com.tranhaison.englishportugesedictionary.adapters.FavoriteAdapter;
+import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
 import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.interfaces.ListItemListener;
 import com.tranhaison.englishportugesedictionary.R;
@@ -27,11 +28,14 @@ public class FavoriteFragment extends Fragment {
     FavoriteAdapter favoriteAdapter;
     ArrayList<DictionaryWord> favoriteList;
 
+    // Init database helper
+    DatabaseHelper databaseHelper;
+
     // Init Fragment listener
     private FragmentListener fragmentListener;
 
-    public FavoriteFragment() {
-        // Required empty public constructor
+    public FavoriteFragment(DatabaseHelper databaseHelper) {
+        this.databaseHelper = databaseHelper;
     }
 
     @Override
@@ -74,9 +78,17 @@ public class FavoriteFragment extends Fragment {
         favoriteAdapter.setOnItemDeleteClick(new ListItemListener() {
             @Override
             public void onItemClick(int position) {
-                Toast.makeText(getActivity(), favoriteAdapter.getItem(position) + " is removed from favorites", Toast.LENGTH_SHORT).show();
+                // Get word
+                DictionaryWord dictionaryWord = (DictionaryWord) favoriteAdapter.getItem(position);
+                String word = dictionaryWord.getWord();
+
+                // Delete word from Favorite
+                databaseHelper.deleteFavorite(word);
                 favoriteAdapter.removeWord(position);
                 favoriteAdapter.notifyDataSetChanged();
+
+                // Inform user
+                Toast.makeText(getActivity(), word + " is removed from favorites", Toast.LENGTH_SHORT).show();
             }
         });
     }
