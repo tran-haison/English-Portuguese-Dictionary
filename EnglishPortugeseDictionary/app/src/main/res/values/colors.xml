@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#fdcd67</color>
-    <color name="colorPrimaryDark">#F3BE21</color>
+    <color name="colorPrimaryDark">#EFBA3D</color>
     <color name="colorAccent">#ffffff</color>
 
+    <!-- Colors for background and card view -->
+    <color name="colorWhite">#ffffff</color>
+    <color name="colorLightWhite">#F4F2F2</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorOrange">#F69316</color>
+
+    <!-- Colors for text and view pager -->
     <color name="colorTabIndicator">#AC7602</color>
     <color name="colorDefault">#34332A</color>
 </resources>

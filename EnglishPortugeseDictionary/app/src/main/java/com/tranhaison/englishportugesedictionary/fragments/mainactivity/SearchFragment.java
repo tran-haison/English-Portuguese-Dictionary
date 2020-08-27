@@ -13,7 +13,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.tranhaison.englishportugesedictionary.DictionaryWord;
+import com.tranhaison.englishportugesedictionary.Constants;
 import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.R;
 
@@ -25,8 +25,7 @@ public class SearchFragment extends Fragment {
     // Init Views and Adapter
     ListView listViewSearch;
     ArrayAdapter<String> arrayAdapter;
-    ArrayList<String> searchList;
-    ArrayList<DictionaryWord> suggestionList;
+    ArrayList<String> suggestionList;
 
     // Init fragment listener to pass argument to Main Activity
     private FragmentListener fragmentListener;
@@ -52,7 +51,6 @@ public class SearchFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         // Init array list
-        searchList = new ArrayList<>();
         suggestionList = new ArrayList<>();
 
         // Get data list from MainActivity
@@ -60,7 +58,7 @@ public class SearchFragment extends Fragment {
 
         // Set adapter to List View
         listViewSearch = view.findViewById(R.id.listViewSearch);
-        arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, searchList);
+        arrayAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, suggestionList);
         listViewSearch.setAdapter(arrayAdapter);
 
         // List View item clicked
@@ -68,7 +66,7 @@ public class SearchFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 if (fragmentListener != null)
-                    fragmentListener.onItemClick(searchList.get(position));
+                    fragmentListener.onItemClick(suggestionList.get(position));
             }
         });
     }
@@ -82,39 +80,12 @@ public class SearchFragment extends Fragment {
     }
 
     /**
-     * Get the list of words start with @value and set to List View
-     * @param word
-     */
-   /* public void filterSearch(String word) {
-        //arrayAdapter.getFilter().filter(word);
-
-        int size = searchList.size();
-        for (int i=0; i<size; i++) {
-            if (arrayAdapter.getItem(i).startsWith(word)) {
-                listViewSearch.setSelection(i);
-                break;
-            }
-        }
-    }*/
-
-    /**
      * Get data source from MainActivity
      */
     public void getSearchList() {
         Bundle bundle = getArguments();
         if (bundle != null) {
-            suggestionList = (ArrayList<DictionaryWord>) bundle.getSerializable("suggestion_list");
-        }
-        convertToStringArrayList();
-    }
-
-    /**
-     * Get a list of word only from data_list to search list
-     */
-    public void convertToStringArrayList() {
-        for (DictionaryWord dictionaryWord : suggestionList) {
-            String word = dictionaryWord.getWord();
-            searchList.add(word);
+            suggestionList = bundle.getStringArrayList(Constants.SUGGESTION_LIST);
         }
     }
 
@@ -122,13 +93,12 @@ public class SearchFragment extends Fragment {
      * Reset data source
      */
     public void resetDataSource() {
-        // Clear lists
+        // Clear list
         suggestionList.clear();
-        searchList.clear();
 
         // Get new data source and display with list view
         getSearchList();
-        arrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_list_item_1, searchList);
+        arrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_list_item_1, suggestionList);
         listViewSearch.setAdapter(arrayAdapter);
     }
 

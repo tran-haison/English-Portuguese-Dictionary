@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorLightWhite"
     tools:context=".fragments.mainactivity.HistoryFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -21,19 +22,22 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
-            style="?attr/materialButtonStyle"
             android:id="@+id/btnClearHistory"
+            style="?attr/materialButtonStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
-            android:background="@drawable/custom_button"
+            android:background="@color/colorDefault"
+            android:elevation="8dp"
             android:text="@string/clear_all_history"
-            android:textSize="20sp"
+            android:textColor="@color/white"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:targetApi="lollipop" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

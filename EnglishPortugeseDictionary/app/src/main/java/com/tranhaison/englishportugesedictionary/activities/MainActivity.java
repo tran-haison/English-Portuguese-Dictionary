@@ -1,12 +1,5 @@
 package com.tranhaison.englishportugesedictionary.activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.Fragment;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.speech.RecognizerIntent;
@@ -15,42 +8,56 @@ import android.text.TextWatcher;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.PopupMenu;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
+
+import com.google.android.datatransport.BuildConfig;
 import com.google.android.material.navigation.NavigationView;
 import com.mancj.materialsearchbar.MaterialSearchBar;
-import com.tranhaison.englishportugesedictionary.DictionaryWord;
-import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
-import com.tranhaison.englishportugesedictionary.databases.LoadDatabase;
-import com.tranhaison.englishportugesedictionary.fragments.mainactivity.AboutFragment;
 import com.tranhaison.englishportugesedictionary.Constants;
 import com.tranhaison.englishportugesedictionary.DictionaryState;
-import com.tranhaison.englishportugesedictionary.DictionaryDataType;
-import com.tranhaison.englishportugesedictionary.fragments.mainactivity.HelpFragment;
-import com.tranhaison.englishportugesedictionary.fragments.mainactivity.FavoriteFragment;
-import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
-import com.tranhaison.englishportugesedictionary.fragments.mainactivity.HistoryFragment;
 import com.tranhaison.englishportugesedictionary.R;
+import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
+import com.tranhaison.englishportugesedictionary.databases.LoadDatabase;
+import com.tranhaison.englishportugesedictionary.dictionaryhelper.DictionaryWord;
+import com.tranhaison.englishportugesedictionary.dictionaryhelper.bookmarks.BookmarkWord;
+import com.tranhaison.englishportugesedictionary.fragments.mainactivity.AboutFragment;
+import com.tranhaison.englishportugesedictionary.fragments.mainactivity.FavoriteFragment;
+import com.tranhaison.englishportugesedictionary.fragments.mainactivity.HelpFragment;
+import com.tranhaison.englishportugesedictionary.fragments.mainactivity.HistoryFragment;
+import com.tranhaison.englishportugesedictionary.fragments.mainactivity.MainFragment;
 import com.tranhaison.englishportugesedictionary.fragments.mainactivity.SearchFragment;
+import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Init Views
+    // Init Views and Layouts
+    LinearLayout linearLayoutMain;
     DrawerLayout drawerLayout;
     FrameLayout frameLayoutContainerGeneral;
     NavigationView navigationView;
-    MaterialSearchBar searchBar;
-    ImageView ivLogo;
-    TextView tvPrompt;
-    Button btnDictionaryType;
+    ImageButton ibMenu, ibVoiceSearchMain;
+    ImageView ivDictionaryType;
+    MaterialSearchBar searchBarMain;
 
     // Init Fragments
+    MainFragment mainFragment;
     FavoriteFragment favoriteFragment;
     HistoryFragment historyFragment;
     SearchFragment searchFragment;
@@ -59,11 +66,12 @@ public class MainActivity extends AppCompatActivity {
 
     // Init Database Helper and Adapter
     DatabaseHelper databaseHelper;
-    DictionaryDataType dictionaryDataType;
 
     // Init variables to hold current dictionary type (default = ENG - POR)
     private int dictionary_type = Constants.ENG_POR;
-    private ArrayList<DictionaryWord> suggestionList;
+    private ArrayList<String> suggestionList;
+
+    public MutableLiveData<List<String>> availableModels = new MutableLiveData<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,34 +85,34 @@ public class MainActivity extends AppCompatActivity {
         // Init Database
         initDatabase();
 
-        // Get the latest dictionary state
-        getLatestState();
-
         // Init and handle Fragments's event
         initFragments();
         handleFragmentsEvent();
 
-        // Pass data list to Search Fragment when user first open the app
-        //passDataToSearchFragment();
+        // Get the latest dictionary state
+        getLatestState();
 
         // Handle events for Views and Menu
         showPopUpMenu();
-        setNavigationItemSelected();
+        setButtonClicked();
+        setupNavigationDrawer();
         setSearchTextChange();
         setSearchAction();
+
     }
 
     /**
      * Map Views from layout file
      */
     private void mapViews() {
+        linearLayoutMain = findViewById(R.id.linearLayoutMain);
         drawerLayout = findViewById(R.id.drawerLayout);
         navigationView = findViewById(R.id.navigationView);
-        searchBar = findViewById(R.id.search_bar);
-        ivLogo = findViewById(R.id.ivLogo);
-        tvPrompt = findViewById(R.id.tvPrompt);
-        btnDictionaryType = findViewById(R.id.btnDictionaryType);
         frameLayoutContainerGeneral = findViewById(R.id.frameLayoutContainerGeneral);
+        ibMenu = findViewById(R.id.ibMenu);
+        ibVoiceSearchMain = findViewById(R.id.ibVoiceSearchMain);
+        ivDictionaryType = findViewById(R.id.ivDictionaryType);
+        searchBarMain = findViewById(R.id.searchBarMain);
     }
 
     /**
@@ -130,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
      * Set visibility to Fragment and Views
      */
     private void initFragments() {
+        mainFragment = new MainFragment(databaseHelper);
         favoriteFragment = new FavoriteFragment(databaseHelper);
         historyFragment = new HistoryFragment(databaseHelper);
         searchFragment = new SearchFragment();
@@ -137,82 +146,172 @@ public class MainActivity extends AppCompatActivity {
         aboutFragment = new AboutFragment();
 
         // Search Fragment will be put into Fragment stack first
-        goToFragment(searchFragment);
-
-        // Set visibility to Fragment and Views
-        frameLayoutContainerGeneral.setVisibility(View.GONE);
+        goToFragment(mainFragment);
     }
 
     /**
-     * Get latest dictionary's state before exiting
+     * Handle Fragments's events
+     */
+    private void handleFragmentsEvent() {
+        mainFragment.setOnFragmentListener(new FragmentListener() {
+            @Override
+            public void onItemClick(String value) {
+                Intent intent = new Intent(MainActivity.this, OnlineSearchingActivity.class);
+                intent.putExtra(Constants.SEARCH_WORD, value);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+
+            @Override
+            public void onItemClick(BookmarkWord favoriteWord) {
+
+            }
+        });
+
+        searchFragment.setOnFragmentListener(new FragmentListener() {
+            @Override
+            public void onItemClick(String value) {
+                goToActivity(value, dictionary_type);
+            }
+
+            @Override
+            public void onItemClick(BookmarkWord favoriteWord) {
+
+            }
+        });
+
+        favoriteFragment.setOnFragmentListener(new FragmentListener() {
+            @Override
+            public void onItemClick(String value) {
+            }
+
+            @Override
+            public void onItemClick(BookmarkWord favoriteWord) {
+                String word = favoriteWord.getDisplayWord();
+                dictionary_type = favoriteWord.getDictionary_type();
+                goToActivity(word, dictionary_type);
+            }
+        });
+
+        historyFragment.setOnFragmentListener(new FragmentListener() {
+            @Override
+            public void onItemClick(String value) {
+            }
+
+            @Override
+            public void onItemClick(BookmarkWord favoriteWord) {
+                String word = favoriteWord.getDisplayWord();
+                dictionary_type = favoriteWord.getDictionary_type();
+                goToActivity(word, dictionary_type);
+            }
+        });
+    }
+
+    /**
+     * Get latest state of dictionary
+     * 1. Latest time when user left the app
+     * 2. Type of dictionary: ENG-POR or POR-ENG
      */
     private void getLatestState() {
-        String value = DictionaryState.getState(this, Constants.DICTIONARY_TYPE);
-        dictionaryDataType = new DictionaryDataType(databaseHelper);
+        String dictionary_last_type = DictionaryState.getState(this, Constants.DICTIONARY_TYPE);
+        long dictionary_last_time_open = DictionaryState.getLastTimeOpen(this, Constants.LAST_TIME_OPEN);
 
-        // Get the latest state of dictionary type and load correspond data
-        if (value != null) {
-            dictionary_type = Integer.parseInt(value);
+        // Get the last dictionary type
+        // else load default value
+        if (dictionary_last_type != null) {
+            dictionary_type = Integer.parseInt(dictionary_last_type);
 
-            // Set text to btnDictionaryType and load data depend on dictionary_type
             if (dictionary_type == Constants.ENG_POR) {
-                btnDictionaryType.setText(R.string.e_p);
-                //dataList = dictionaryDataType.getEngPor();
+                ivDictionaryType.setImageResource(R.drawable.img_english_flag);
             } else if (dictionary_type == Constants.POR_ENG) {
-                btnDictionaryType.setText(R.string.p_e);
-                //dataList = dictionaryDataType.getPorEng();
+                ivDictionaryType.setImageResource(R.drawable.img_portuguese_flag);
             }
         } else {
-            // Default dictionary type
             dictionary_type = Constants.ENG_POR;
-            btnDictionaryType.setText(R.string.e_p);
-            //dataList = dictionaryDataType.getEngPor();
+            ivDictionaryType.setImageResource(R.drawable.img_english_flag);
+        }
+
+        // Get last open time before user left
+        if (dictionary_last_time_open != 0) {
+            // Calculate the difference between current time and last time
+            Calendar current_calendar = Calendar.getInstance();
+            int day_difference = (int) (current_calendar.getTimeInMillis() - dictionary_last_time_open) / Constants.MILLIS_TO_DAY;
+
+            // Compare the current date and the latest opened date
+            if (day_difference >= 1) {
+                loadRandomWord();
+            } else {
+                // Set the calendar to last_time in millis
+                Calendar last_time = Calendar.getInstance();
+                last_time.setTimeInMillis(dictionary_last_time_open);
+
+                if (current_calendar.get(Calendar.DATE) - last_time.get(Calendar.DATE) == 1) {
+                    loadRandomWord();
+                }
+            }
         }
     }
 
     /**
-     * Set Visibility to ivLogo, tvPrompt and flContainer
-     * @param isFragment
+     * Get a new word each day for user
      */
-    private void setViewVisibility(boolean isFragment) {
-        if (isFragment) {
-            ivLogo.setVisibility(View.GONE);
-            tvPrompt.setVisibility(View.GONE);
-            frameLayoutContainerGeneral.setVisibility(View.VISIBLE);
-        } else {
-            ivLogo.setVisibility(View.VISIBLE);
-            tvPrompt.setVisibility(View.VISIBLE);
-            frameLayoutContainerGeneral.setVisibility(View.GONE);
-        }
+    public void loadRandomWord() {
+        DictionaryWord randomWord = databaseHelper.getRandomWord();
+
+        //String displayWord = randomWord.getDisplayWord();
+        //String explanation = randomWord.getExplanations();
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable("random_word", randomWord);
+        //bundle.putString(Constants.WORD_OF_THE_DAY, displayWord);
+        //bundle.putString(Constants.WORD_OF_THE_DAY_EXPLANATION, explanation);
+        mainFragment.setArguments(bundle);
+    }
+
+    /**
+     * Pass the data list from MainActivity to SearchFragment
+     */
+    private void passDataToSearchFragment() {
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList(Constants.SUGGESTION_LIST, suggestionList);
+        searchFragment.setArguments(bundle);
     }
 
     /**
      * Pop up menu will show up to let user choose dictionary type
      */
     private void showPopUpMenu() {
-        btnDictionaryType.setOnClickListener(new View.OnClickListener() {
+        ivDictionaryType.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(MainActivity.this, btnDictionaryType);
+                PopupMenu popupMenu = new PopupMenu(MainActivity.this, ivDictionaryType);
                 popupMenu.getMenuInflater().inflate(R.menu.menu_popup_dictionary_type, popupMenu.getMenu());
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
+
                         Fragment current_fragment = getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainerGeneral);
 
+                        String current_word;
+
                         switch (menuItem.getItemId()) {
+
                             case R.id.menu_eng_por:
                                 // Set dictionary type = ENG-POR
                                 dictionary_type = Constants.ENG_POR;
-                                btnDictionaryType.setText(R.string.e_p);
+                                ivDictionaryType.setImageResource(R.drawable.img_english_flag);
 
-                                // Get English - Portuguese data source
-                                //dataList = dictionaryDataType.getEngPor();
-                                //passDataToSearchFragment();
-
-                                // Reset data source of SearchFragment
-                                if (current_fragment instanceof SearchFragment) {
-                                    searchFragment.resetDataSource();
+                                // Check if the search bar is already containing searching word or not
+                                current_word = searchBarMain.getText();
+                                if (!current_word.isEmpty()) {
+                                    // Reset data source of SearchFragment
+                                    if (current_fragment instanceof SearchFragment) {
+                                        // Get suggestion list and pass to SearchFragment
+                                        suggestionList = databaseHelper.getSuggestions(current_word, dictionary_type);
+                                        passDataToSearchFragment();
+                                        // Reset the list of suggested words depending on dictionary_type
+                                        searchFragment.resetDataSource();
+                                    }
                                 }
 
                                 // Save the current dictionary state into Shared Preferences
@@ -226,15 +325,19 @@ public class MainActivity extends AppCompatActivity {
                             case R.id.menu_por_eng:
                                 // Set dictionary type = POR-ENG
                                 dictionary_type = Constants.POR_ENG;
-                                btnDictionaryType.setText(R.string.p_e);
+                                ivDictionaryType.setImageResource(R.drawable.img_portuguese_flag);
 
-                                // Get Portuguese - English data source
-                                //dataList = dictionaryDataType.getPorEng();
-                                //passDataToSearchFragment();
-
-                                // Reset data source of SearchFragment
-                                if (current_fragment instanceof SearchFragment) {
-                                    searchFragment.resetDataSource();
+                                // Check if the search bar is already containing searching word or not
+                                current_word = searchBarMain.getText();
+                                if (!current_word.isEmpty()) {
+                                    // Reset data source of SearchFragment
+                                    if (current_fragment instanceof SearchFragment) {
+                                        // Get suggestion list and pass to SearchFragment
+                                        suggestionList = databaseHelper.getSuggestions(current_word, dictionary_type);
+                                        passDataToSearchFragment();
+                                        // Reset the list of suggested words depending on dictionary_type
+                                        searchFragment.resetDataSource();
+                                    }
                                 }
 
                                 // Save the current dictionary state into Shared Preferences
@@ -254,64 +357,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Handle Fragments's events
+     * Handle button event clicked
      */
-    private void handleFragmentsEvent() {
-        searchFragment.setOnFragmentListener(new FragmentListener() {
+    private void setButtonClicked() {
+        ibMenu.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(String value) {
-                goToDetailActivity(value);
+            public void onClick(View view) {
+                // Open navigation drawer
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
             }
         });
 
-        favoriteFragment.setOnFragmentListener(new FragmentListener() {
+        ibVoiceSearchMain.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemClick(String value) {
-                goToDetailActivity(value);
+            public void onClick(View view) {
+                // Call speech intent
+                Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, R.string.speech_recognizer);
+                startActivityForResult(speechIntent, Constants.REQUEST_SPEECH_RECOGNIZER);
             }
         });
-
-        historyFragment.setOnFragmentListener(new FragmentListener() {
-            @Override
-            public void onItemClick(String value) {
-                goToDetailActivity(value);
-            }
-        });
-    }
-
-    /**
-     * Pass the data list from MainActivity to SearchFragment
-     */
-    private void passDataToSearchFragment() {
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("suggestion_list", suggestionList);
-        searchFragment.setArguments(bundle);
-    }
-
-    /**
-     * Get the list of History and pass to HistoryFragment
-     */
-    private void passDataToHistoryFragment() {
-        ArrayList<DictionaryWord> historyList = databaseHelper.getAllHistory();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("history_list", historyList);
-        historyFragment.setArguments(bundle);
-    }
-
-    /**
-     * Get a list of Favorite and pass to FavoriteFragment
-     */
-    private void passDataToFavoriteFragment() {
-        ArrayList<DictionaryWord> favoriteList = databaseHelper.getAllFavorite();
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("favorite_list", favoriteList);
-        favoriteFragment.setArguments(bundle);
     }
 
     /**
      * Handle navigation menu items click
      */
-    private void setNavigationItemSelected() {
+    private void setupNavigationDrawer() {
+        navigationView.bringToFront();
+        navigationView.setCheckedItem(R.id.navigation_home);
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
@@ -319,36 +398,40 @@ public class MainActivity extends AppCompatActivity {
 
                 switch (item) {
 
-                    // Call intent to SettingActivity
-                    case R.id.navigation_setting:
-                        Intent intent = new Intent(MainActivity.this, SettingActivity.class);
-                        startActivity(intent);
-                        overridePendingTransition(R.anim.enter_animation, R.anim.exit_animation);
+                    // Call main fragment
+                    case R.id.navigation_home:
+                        goToFragment(mainFragment);
+                        break;
+
+                        // Call share intent
+                    case R.id.navigation_share:
+                        Intent sendIntent = new Intent();
+                        sendIntent.setAction(Intent.ACTION_SEND);
+                        sendIntent.putExtra(Intent.EXTRA_TEXT,
+                                "Hey check out my app at: https://play.google.com/store/apps/details?id=" + BuildConfig.APPLICATION_ID);
+                        sendIntent.setType("text/plain");
+                        startActivity(sendIntent);
                         break;
 
                     // Call FavoriteFragment
                     case R.id.navigation_favorite:
-                        setViewVisibility(true);
-                        passDataToFavoriteFragment();
+                        //passDataToFavoriteFragment();
                         goToFragment(favoriteFragment);
                         break;
 
                     // Call HistoryFragment
                     case R.id.navigation_history:
-                        setViewVisibility(true);
-                        passDataToHistoryFragment();
+                        //passDataToHistoryFragment();
                         goToFragment(historyFragment);
                         break;
 
                     // Call HelpFragment
                     case R.id.navigation_help:
-                        setViewVisibility(true);
                         goToFragment(helpFragment);
                         break;
 
                     // Call AboutFragment
                     case R.id.navigation_about:
-                        setViewVisibility(true);
                         goToFragment(aboutFragment);
                         break;
                 }
@@ -357,6 +440,32 @@ public class MainActivity extends AppCompatActivity {
                 drawerLayout.closeDrawer(GravityCompat.START);
 
                 return true;
+            }
+        });
+
+        // Set translate animation to menu navigation and main layout
+        animateNavigationDrawer();
+    }
+
+    /**
+     * Set animation to menu navigation and main layout
+     */
+    private void animateNavigationDrawer() {
+        drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+                // Scale the View based on current slide offset
+                final float diffScaledOffset = slideOffset * (1 - Constants.END_SCALE);
+                final float offsetScale = 1 - diffScaledOffset;
+                linearLayoutMain.setScaleX(offsetScale);
+                linearLayoutMain.setScaleY(offsetScale);
+
+                // Translate the View, accounting for the scaled width
+                final float xOffset = drawerView.getWidth() * slideOffset;
+                final float xOffsetDiff = linearLayoutMain.getWidth() * diffScaledOffset / 2;
+                final float xTranslation = xOffset - xOffsetDiff;
+                linearLayoutMain.setTranslationX(xTranslation);
             }
         });
     }
@@ -368,7 +477,7 @@ public class MainActivity extends AppCompatActivity {
      * 3. After text change
      */
     private void setSearchTextChange() {
-        searchBar.addTextChangeListener(new TextWatcher() {
+        searchBarMain.addTextChangeListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
@@ -378,19 +487,14 @@ public class MainActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 String word = charSequence.toString();
 
-                if (word.isEmpty()) {
-                    setViewVisibility(false);
-                } else {
+                if (!word.isEmpty()) {
                     // Get suggestion list and pass to SearchFragment
-                    suggestionList = databaseHelper.getSuggestions(word);
+                    suggestionList = databaseHelper.getSuggestions(word, dictionary_type);
                     passDataToSearchFragment();
 
                     // Reset suggestion source
                     searchFragment.resetDataSource();
-
-                    setViewVisibility(true);
                 }
-                //searchFragment.filterSearch(charSequence.toString());
             }
 
             @Override
@@ -407,54 +511,36 @@ public class MainActivity extends AppCompatActivity {
      * 3. On button clicked
      */
     private void setSearchAction() {
-        searchBar.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+        searchBarMain.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
             @Override
             public void onSearchStateChanged(boolean enabled) {
-                // Get current fragment
-                Fragment currFragment = getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainerGeneral);
+                // Set item checked to Home
+                navigationView.setCheckedItem(R.id.navigation_home);
 
-                // If search is enabled -> switch current fragment to SearchFragment and display SearchFragment
-                // else display app's logo and prompt
+                //Fragment currFragment = getSupportFragmentManager().findFragmentById(R.id.frameLayoutContainerGeneral);
+
                 if (enabled) {
-                    if (!(currFragment instanceof SearchFragment)) {
-                        goToFragment(searchFragment);
-                    }
-                    setViewVisibility(true);
+                    goToFragment(searchFragment);
                 } else {
-                    setViewVisibility(false);
+                    goToFragment(mainFragment);
                 }
             }
 
             @Override
             public void onSearchConfirmed(CharSequence text) {
-                String search_word = text.toString();
-                goToDetailActivity(search_word);
+                goToActivity(text.toString(), dictionary_type);
             }
 
             @Override
             public void onButtonClicked(int buttonCode) {
-                switch (buttonCode) {
 
-                    case MaterialSearchBar.BUTTON_NAVIGATION:
-                        // Open navigation drawer
-                        drawerLayout.openDrawer(GravityCompat.START);
-                        navigationView.bringToFront();
-                        break;
-
-                    case MaterialSearchBar.BUTTON_SPEECH:
-                        // Call speech intent
-                        Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                        speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, R.string.speech_recognizer);
-                        startActivityForResult(speechIntent, Constants.REQUEST_SPEECH_RECOGNIZER);
-                        break;
-                }
             }
         });
     }
 
     /**
      * Begin transaction, switch fragments among others
+     *
      * @param fragment
      */
     private void goToFragment(Fragment fragment) {
@@ -473,21 +559,40 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Call intent to Detail Activity
+     *
      * @param word
      */
-    private void goToDetailActivity(String word) {
-        Intent intent = new Intent(MainActivity.this, DetailActivity.class);
-        intent.putExtra("word", word);
-        startActivity(intent);
-        overridePendingTransition(R.anim.enter_animation, R.anim.exit_animation);
+    private void goToActivity(String word, int dictionary_type) {
+        // Get id of the word
+        int wordList_id = databaseHelper.getWordListId(word, dictionary_type);
+
+        // If word exists -> go to DetailActivity
+        // else go to OnlineSearchingActivity
+        if (wordList_id != -1) {
+            Intent intent = new Intent(MainActivity.this, DetailActivity.class);
+            intent.putExtra(Constants.WORD_LIST_ID, wordList_id);
+            intent.putExtra(Constants.DICTIONARY_TYPE, dictionary_type);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        } else {
+            Toast.makeText(this, "Word not found, please search online", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         // Get text from speech
         if (requestCode == Constants.REQUEST_SPEECH_RECOGNIZER && resultCode == RESULT_OK && data != null) {
+            // Get text from speech
             ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            searchBar.setText(matches.get(0));
+            String text = matches.get(0);
+
+            Toast.makeText(this, text, Toast.LENGTH_SHORT).show();
+
+            // Pass text to MainFragment
+            Bundle bundle = new Bundle();
+            bundle.putString(Constants.TEXT_TRANSLATION, text);
+            mainFragment.setArguments(bundle);
         }
 
         super.onActivityResult(requestCode, resultCode, data);
@@ -500,5 +605,16 @@ public class MainActivity extends AppCompatActivity {
         else super.onBackPressed();
     }
 
+    @Override
+    protected void onDestroy() {
+        // Get current date and save into shared preferences
+        Calendar calendar = Calendar.getInstance();
+        long current_date = calendar.getTimeInMillis();
+        DictionaryState.saveLastTimeOpen(this, Constants.LAST_TIME_OPEN, current_date);
+
+        // Close db
+        databaseHelper.close();
+        super.onDestroy();
+    }
 
 }

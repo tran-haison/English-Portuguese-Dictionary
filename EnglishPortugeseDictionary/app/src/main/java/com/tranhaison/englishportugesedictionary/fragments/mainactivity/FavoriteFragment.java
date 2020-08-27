@@ -1,32 +1,28 @@
 package com.tranhaison.englishportugesedictionary.fragments.mainactivity;
 
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.tranhaison.englishportugesedictionary.DictionaryWord;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+
+import com.tranhaison.englishportugesedictionary.R;
 import com.tranhaison.englishportugesedictionary.adapters.FavoriteAdapter;
 import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
+import com.tranhaison.englishportugesedictionary.dictionaryhelper.bookmarks.BookmarkWord;
 import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.interfaces.ListItemListener;
-import com.tranhaison.englishportugesedictionary.R;
-
-import java.util.ArrayList;
 
 public class FavoriteFragment extends Fragment {
 
-    // Init List View, Adapter and Array
+    // Init list view, adapter
     ListView lisViewFavorites;
     FavoriteAdapter favoriteAdapter;
-    ArrayList<DictionaryWord> favoriteList;
 
     // Init database helper
     DatabaseHelper databaseHelper;
@@ -54,12 +50,9 @@ public class FavoriteFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Get favoriteList data source from MainActivity
-        getFavoriteList();
-
         // Set Adapter to List View
         lisViewFavorites = view.findViewById(R.id.listViewFavorites);
-        favoriteAdapter = new FavoriteAdapter(getActivity(), favoriteList);
+        favoriteAdapter = new FavoriteAdapter(getActivity(), databaseHelper);
         lisViewFavorites.setAdapter(favoriteAdapter);
 
         // List View's item clicked
@@ -67,9 +60,8 @@ public class FavoriteFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 if (fragmentListener != null) {
-                    DictionaryWord favoriteWord = (DictionaryWord) favoriteAdapter.getItem(position);
-                    String word = favoriteWord.getWord();
-                    fragmentListener.onItemClick(word);
+                    BookmarkWord favoriteWord = (BookmarkWord) favoriteAdapter.getItem(position);
+                    fragmentListener.onItemClick(favoriteWord);
                 }
             }
         });
@@ -79,11 +71,11 @@ public class FavoriteFragment extends Fragment {
             @Override
             public void onItemClick(int position) {
                 // Get word
-                DictionaryWord dictionaryWord = (DictionaryWord) favoriteAdapter.getItem(position);
-                String word = dictionaryWord.getWord();
+                BookmarkWord dictionaryWord = (BookmarkWord) favoriteAdapter.getItem(position);
+                String word = dictionaryWord.getDisplayWord();
 
                 // Delete word from Favorite
-                databaseHelper.deleteFavorite(word);
+                databaseHelper.deleteFavorite(dictionaryWord.getWordList_id());
                 favoriteAdapter.removeWord(position);
                 favoriteAdapter.notifyDataSetChanged();
 
@@ -95,20 +87,11 @@ public class FavoriteFragment extends Fragment {
 
     /**
      * Event handler
+     *
      * @param fragmentListener
      */
     public void setOnFragmentListener(FragmentListener fragmentListener) {
         this.fragmentListener = fragmentListener;
     }
 
-    /**
-     * Get a List of favorite words in db
-     * @return
-     */
-    public void getFavoriteList() {
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            favoriteList = (ArrayList<DictionaryWord>) bundle.getSerializable("favorite_list");
-        }
-    }
 }

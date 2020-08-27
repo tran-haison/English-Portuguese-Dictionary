@@ -15,14 +15,13 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.tranhaison.englishportugesedictionary.DictionaryWord;
 import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
+import com.tranhaison.englishportugesedictionary.dictionaryhelper.DictionaryWord;
+import com.tranhaison.englishportugesedictionary.dictionaryhelper.bookmarks.BookmarkWord;
 import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 import com.tranhaison.englishportugesedictionary.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
 
 public class HistoryFragment extends Fragment {
 
@@ -30,8 +29,10 @@ public class HistoryFragment extends Fragment {
     Button btnClearHistory;
     ListView listViewHistory;
     ArrayAdapter<String> arrayAdapter;
+
+    // Init array lists
     ArrayList<String> historyStringList;
-    ArrayList<DictionaryWord> historyWordList;
+    ArrayList<BookmarkWord> historyList;
 
     // Init database helper
     DatabaseHelper databaseHelper;
@@ -65,7 +66,7 @@ public class HistoryFragment extends Fragment {
 
         // Init array
         historyStringList = new ArrayList<>();
-        historyWordList = new ArrayList<>();
+        historyList = new ArrayList<>();
 
         // Get data
         getHistoryList();
@@ -79,7 +80,7 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 if (fragmentListener != null) {
-                    fragmentListener.onItemClick(historyStringList.get(i));
+                    fragmentListener.onItemClick(historyList.get(i));
                 }
             }
         });
@@ -89,11 +90,11 @@ public class HistoryFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 // Clear all words in list in case list is not empty
-                if (!historyWordList.isEmpty()) {
+                if (!historyList.isEmpty()) {
                     // Delete all in History
                     databaseHelper.deleteAllHistory();
                     historyStringList.clear();
-                    historyWordList.clear();
+                    historyList.clear();
                     arrayAdapter.notifyDataSetChanged();
                     Toast.makeText(getContext(), "Clear all history", Toast.LENGTH_SHORT).show();
                 } else {
@@ -112,36 +113,14 @@ public class HistoryFragment extends Fragment {
     }
 
     /**
-     * Get a list of all words that have been searched
+     * Get a list of all recent BookmarkWord and convert to list of all words (just string)
      */
     public void getHistoryList() {
-        Bundle bundle = getArguments();
-        if (bundle != null) {
-            historyWordList = (ArrayList<DictionaryWord>) bundle.getSerializable("history_list");
-        }
-        convertToStringArrayList();
-    }
-
-    /**
-     * Get a list of all words only (not include definition, example, synonym and antonym)
-     */
-    public void convertToStringArrayList() {
-        for (DictionaryWord dictionaryWord : historyWordList) {
-            String word = dictionaryWord.getWord();
-            historyStringList.add(word);
+        historyList = databaseHelper.getAllHistory();
+        for (BookmarkWord recentWord : historyList) {
+            historyStringList.add(recentWord.getDisplayWord());
         }
     }
 
-    /**
-     * Reset the list of words in History
-     */
-    public void resetDataSource() {
-        historyWordList.clear();
-        historyStringList.clear();
 
-        getHistoryList();
-        arrayAdapter.notifyDataSetChanged();
-        //arrayAdapter = new ArrayAdapter<>(Objects.requireNonNull(getContext()), android.R.layout.simple_list_item_1, historyStringList);
-        //listViewHistory.setAdapter(arrayAdapter);
-    }
 }

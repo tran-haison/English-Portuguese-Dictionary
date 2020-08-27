@@ -9,30 +9,33 @@
 
     <ImageView
         android:id="@+id/imageViewAppLogo"
-        android:layout_width="400dp"
+        android:layout_width="0dp"
         android:layout_height="400dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
+        android:layout_marginEnd="32dp"
         android:background="@null"
         android:contentDescription="@string/todo"
         android:src="@drawable/lg_book"
         android:transitionName="app_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" tools:targetApi="lollipop"/>
+        app:layout_constraintTop_toTopOf="parent"
+        tools:targetApi="lollipop" />
 
     <TextView
         android:id="@+id/textViewAppName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="60dp"
         android:layout_marginEnd="16dp"
         android:transitionName="app_name"
         android:fontFamily="@font/bangers"
         android:includeFontPadding="false"
         android:text="@string/portuguese_dictionary"
         android:textAlignment="center"
-        android:textSize="45sp"
+        android:textSize="35sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewAppLogo" tools:targetApi="lollipop"/>
@@ -46,7 +49,7 @@
         android:layout_marginEnd="16dp"
         android:fontFamily="@font/antic"
         android:text="@string/a_simple_dictionary_app"
-        android:textSize="20sp"
+        android:textSize="25sp"
         android:textAlignment="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

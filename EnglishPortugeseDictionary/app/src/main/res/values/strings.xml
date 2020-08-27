@@ -1,14 +1,16 @@
 <resources>
     <string name="app_name">English Portuguese Dictionary</string>
+    <string name="portuguese_dictionary">Portuguese Dictionary</string>
 
     <!-- Prompts -->
     <string name="a_simple_dictionary_app">Simple dictionary app</string>
     <string name="type_a_word_to_get_its_meaning">Type a word to get its meaning</string>
     <string name="type_a_word">Type a word</string>
     <string name="speech_recognizer">Hi! Tell me what word you want to search</string>
+    <string name="search">Search...</string>
+    <string name="not_found">Not found...</string>
 
     <!-- Dictionary type -->
-    <string name="portuguese_dictionary">Portuguese Dictionary</string>
     <string name="eng_por">English - Portuguese</string>
     <string name="por_eng">Portuguese - English</string>
     <string name="e_p">E-P</string>
@@ -16,10 +18,54 @@
 
     <!-- For Views -->
     <string name="todo">TODO</string>
-    <string name="settings">Settings</string>
     <string name="clear_all_history">Clear all history</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="translate">Translate</string>
+    <string name="online_searching">Online searching</string>
 
+    <!-- Main Fragment -->
+    <string name="word_of_the_day">Word of the day</string>
+    <string name="translate_text">Translate text</string>
+    <string name="find_a_word_online">Find a word online</string>
+    <string name="search_">Search</string>
+    <string name="hello">Hello</string>
+    <string name="welcome_to_english_portuguese_dictionary">Welcome to English Portuguese Dictionary</string>
+    <string name="benifit">[benifit]</string>
+    <string name="result">Result</string>
+
+    <!-- Definition Fragment -->
+    <string name="definition">Definition</string>
+    <string name="grammars">Grammars</string>
+    <string name="example_definition">* proveito\n* benéfico, favor\n* vantagem\n* privilégio\n* beneficiar\n* aproveitar\n* lucrar</string>
+    <string name="pronounce">Pronounce</string>
+
+    <!-- Explanation Fragment -->
+    <string name="english_explanations">English explanations</string>
+    <string name="synonyms">Synonyms</string>
+
+    <!-- Card View layout adapter -->
+    <string name="example_english_sentence">I got much benefit from that book</string>
+    <string name="example_translation">Tirei muito proveito desse livro.</string>
+    <string name="examples">Examples</string>
+
+    <!-- About us -->
+    <string name="about_us">About us</string>
+    <string name="about_us_1"><![CDATA[We built this application to help people who is struggling to find the right dictionary for learning English & Portuguese.]]></string>
+    <string name="about_us_2">However, We know that there have been a lot of mistakes since We built this app from the day 1. So We will be really grateful if you guys are willing to help us improve it.</string>
+    <string name="about_us_3">Every suggestions and contributions will be welcome, however small.</string>
+    <string name="about_us_signature">- English Portuguese Dictionary -</string>
+
+    <!-- Information -->
+    <string name="information">Information</string>
+    <string name="help_list_of_features">List of features:</string>
+    <string name="help_1">1. Find English/Portuguese word: DEFINITION, ENGLISH EXPLANATION, EXAMPLE and SYNONYM.</string>
+    <string name="help_2">2. Search for an online word.</string>
+    <string name="help_3">3. Show 1 new English word each day (help you learn new word).</string>
+    <string name="help_4">4. Translate text.</string>
+    <string name="help_5">5. Text to speech - pronounce a word and/or a sentence.</string>
+    <string name="help_6">6. Speech to text - find a word by saying it.</string>
+    <string name="help_7">7. Add words to list of Favorite.</string>
+    <string name="help_prompt">For more information, please leave your question below</string>
+    <string name="help_question">Your question?</string>
+    <string name="help_submit">Submit</string>
 
 </resources>

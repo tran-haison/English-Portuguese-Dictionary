@@ -3,12 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.mainactivity.FavoriteFragment">
+    tools:context=".fragments.mainactivity.FavoriteFragment"
+    android:background="@color/colorLightWhite">
 
     <ListView
         android:id="@+id/listViewFavorites"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"/>
+        android:padding="16dp"/>
 
 </FrameLayout>

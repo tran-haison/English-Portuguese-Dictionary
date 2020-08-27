@@ -7,4 +7,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- Theme for menu navigation drawer-->
+    <style name="MenuTheme">
+        <!-- Color for texts and icons-->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!-- Color for background -->
+        <item name="colorControlHighlight">@color/colorDefault</item>
+    </style>
+
 </resources>

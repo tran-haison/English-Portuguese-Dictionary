@@ -38,8 +38,6 @@ public class LoadDatabase extends AsyncTask<Void, Void, Boolean> {
 
     @Override
     protected Boolean doInBackground(Void... voids) {
-        databaseHelper = new DatabaseHelper(context);
-
         databaseHelper.createDatabase();
         databaseHelper.close();
 

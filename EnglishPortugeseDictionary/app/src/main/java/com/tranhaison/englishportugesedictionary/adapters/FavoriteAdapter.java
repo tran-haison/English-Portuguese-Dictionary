@@ -8,8 +8,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import com.tranhaison.englishportugesedictionary.DictionaryWord;
+import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
 import com.tranhaison.englishportugesedictionary.R;
+import com.tranhaison.englishportugesedictionary.dictionaryhelper.bookmarks.BookmarkWord;
 import com.tranhaison.englishportugesedictionary.interfaces.ListItemListener;
 
 import java.util.ArrayList;
@@ -22,20 +23,23 @@ public class FavoriteAdapter extends BaseAdapter {
 
     // Init global variables
     private Context context;
-    private ArrayList<DictionaryWord> favoriteList;
+    private ArrayList<BookmarkWord> favoriteList;
+    private DatabaseHelper databaseHelper;
 
-    public FavoriteAdapter(Context context, ArrayList<DictionaryWord> favoriteList) {
+    public FavoriteAdapter(Context context, DatabaseHelper databaseHelper) {
         this.context = context;
-        this.favoriteList = favoriteList;
+        this.databaseHelper = databaseHelper;
     }
 
     @Override
     public int getCount() {
+        getData();
         return favoriteList.size();
     }
 
     @Override
     public Object getItem(int i) {
+        getData();
         return favoriteList.get(i);
     }
 
@@ -51,6 +55,7 @@ public class FavoriteAdapter extends BaseAdapter {
 
     @Override
     public View getView(final int position, View view, ViewGroup viewGroup) {
+        getData();
         ViewHolder viewHolder;
 
         if (view == null) {
@@ -71,13 +76,13 @@ public class FavoriteAdapter extends BaseAdapter {
         }
 
         // Get favorite word and definition
-        DictionaryWord favoriteWord = favoriteList.get(position);
-        String word = favoriteWord.getWord();
-        String definition = favoriteWord.getDefinition();
+        BookmarkWord favoriteWord = favoriteList.get(position);
+        String displayWord = favoriteWord.getDisplayWord();
+        String explanation = favoriteWord.getExplanations();
 
         // Set text to text view
-        viewHolder.tvFavoriteWord.setText(word);
-        viewHolder.tvFavoriteDefinition.setText(definition);
+        viewHolder.tvFavoriteWord.setText(displayWord);
+        viewHolder.tvFavoriteDefinition.setText(explanation);
 
         // tvFavoriteWord clicked
         view.setOnClickListener(new View.OnClickListener() {
@@ -100,6 +105,11 @@ public class FavoriteAdapter extends BaseAdapter {
         });
 
         return view;
+    }
+
+    public void getData() {
+        //favoriteList.clear();
+        favoriteList = databaseHelper.getAllFavorite();
     }
 
     /**
