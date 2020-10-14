@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="280dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="10dp"
+    android:foreground="?attr/selectableItemBackgroundBorderless"
+    app:cardBackgroundColor="@color/colorLightGray"
+    app:cardCornerRadius="10dp"
+    app:cardElevation="3dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:id="@+id/linearLayoutFavoriteWordItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginVertical="16dp"
+            android:layout_marginStart="20dp"
+            android:layout_toStartOf="@id/ivBookmarkFavorite"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/tvFavoriteFeatureWord"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/poppins_semibold"
+                android:includeFontPadding="false"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="@string/example"
+                android:textAllCaps="true"
+                android:textColor="@color/colorDefault"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvFavoriteFeatureDefinition"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@string/example_english_sentence"
+                android:textSize="15sp" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ivBookmarkFavorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="10dp"
+            android:contentDescription="@string/todo"
+
+            android:padding="5dp"
+            android:src="@drawable/ic_bookmark_24dp"
+            app:tint="@color/colorRed3" />
+
+    </RelativeLayout>
+
+</androidx.cardview.widget.CardView>

@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorLightGray"
+    android:transitionName="text_translation_activity"
+    tools:context=".activities.TextTranslationActivity"
+    android:id="@+id/constraintLayoutTextTranslation">
+
+    <RelativeLayout
+        android:id="@+id/toolBarTextTranslation"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorRed1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/ibBackTextTranslation"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:background="#00000000"
+            android:contentDescription="@string/todo"
+            android:foreground="?attr/selectableItemBackground"
+            android:src="@drawable/ic_back_24dp"
+            android:tint="@color/white"
+            tools:targetApi="m" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/ibBackTextTranslation"
+            android:layout_toStartOf="@id/ibTranslate"
+            android:text="@string/translate_text"
+            android:textColor="@color/white"
+            android:textSize="18sp" />
+
+        <ImageButton
+            android:onClick="performTranslate"
+            android:id="@+id/ibTranslate"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:background="#00000000"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_translate_24dp"
+            android:tint="@color/white"
+            android:contentDescription="@string/todo"/>
+
+    </RelativeLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="10dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="3dp"
+        app:layout_constraintBottom_toTopOf="@id/linearLayoutSwapTranslationType"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolBarTextTranslation">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <EditText
+                android:id="@+id/etInputText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/linearLayoutTranslateTextInput"
+                android:background="@color/white"
+                android:cursorVisible="true"
+                android:gravity="start"
+                android:hint="@string/english_text"
+                android:importantForAutofill="no"
+                android:inputType="textMultiLine"
+                android:padding="10dp"
+                android:textColorHighlight="@color/colorPrimary"
+                android:textCursorDrawable="@null"
+                android:textSize="16sp"
+                android:textColor="@color/colorDefault"/>
+
+            <LinearLayout
+                android:id="@+id/linearLayoutTranslateTextInput"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="end"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <ImageView
+                    android:id="@+id/ivClearInputText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/todo"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_close_24dp"
+                    tools:targetApi="m" />
+
+                <ImageView
+                    android:id="@+id/ivSpeakerInputText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/todo"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="speakInputText"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_speaker_24dp"
+                    tools:targetApi="m" />
+
+                <ImageView
+                    android:id="@+id/ivCopyInputText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/todo"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_copy_border_24dp"
+                    tools:targetApi="m" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutSwapTranslationType"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/btnTranslate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolBarTextTranslation">
+
+        <ImageView
+            android:id="@+id/ivFlagInput"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/img_england_flag" />
+
+        <ImageView
+            android:id="@+id/ivSwap"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
+            android:contentDescription="@string/todo"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_swap_24dp" />
+
+        <ImageView
+            android:id="@+id/ivFlagOutput"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/img_portugal_flag" />
+
+    </LinearLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="15dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15dp"
+        app:cardBackgroundColor="@color/white"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="3dp"
+        app:layout_constraintBottom_toTopOf="@id/btnTranslate"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/linearLayoutSwapTranslationType">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:id="@+id/tvOutputText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@id/linearLayoutTranslateTextResult"
+                android:gravity="start"
+                android:hint="@string/result"
+                android:padding="10dp"
+                android:textColor="@color/colorDefault"
+                android:textSize="16sp" />
+
+            <LinearLayout
+                android:id="@+id/linearLayoutTranslateTextResult"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:gravity="end"
+                android:orientation="horizontal"
+                android:padding="5dp">
+
+                <ImageView
+                    android:id="@+id/ivSpeakerTranslatedText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/todo"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="speakOutputText"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_speaker_24dp" />
+
+                <ImageView
+                    android:id="@+id/ivCopyTranslatedText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/todo"
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_copy_border_24dp"
+                    tools:targetApi="m" />
+
+            </LinearLayout>
+
+        </RelativeLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:onClick="performTranslate"
+        android:id="@+id/btnTranslate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="13dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/custom_button"
+        android:elevation="3dp"
+        android:foreground="?attr/selectableItemBackgroundBorderless"
+        android:text="@string/translate"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:targetApi="m" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

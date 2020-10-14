@@ -11,7 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.tranhaison.englishportugesedictionary.Constants;
+import com.tranhaison.englishportugesedictionary.utils.Constants;
 import com.tranhaison.englishportugesedictionary.R;
 
 public class SplashScreenActivity extends AppCompatActivity {

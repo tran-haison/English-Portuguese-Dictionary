@@ -3,8 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.detailactivity.SynonymFragment"
-    android:background="@color/white">
+    tools:context=".fragments.SynonymFragment">
 
     <LinearLayout
         android:id="@+id/linearLayoutSynonymPrompt"
@@ -19,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="10dp"
             android:text="@string/synonyms"
-            android:textColor="@color/colorPrimaryDark"
+            android:textColor="@color/colorRed1"
             android:textSize="22sp" />
 
         <TextView
@@ -37,7 +36,9 @@
         android:id="@+id/listViewSynonym"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorLightWhite"
-        android:padding="16dp" />
+        android:padding="10dp"
+        android:clipToPadding="false"
+        android:dividerHeight="10dp"
+        android:divider="@color/white"/>
 
 </FrameLayout>

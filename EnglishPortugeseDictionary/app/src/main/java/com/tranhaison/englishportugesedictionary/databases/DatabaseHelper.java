@@ -8,12 +8,13 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.tranhaison.englishportugesedictionary.Constants;
-import com.tranhaison.englishportugesedictionary.dictionaryhelper.DictionaryWord;
-import com.tranhaison.englishportugesedictionary.dictionaryhelper.EnglishDictionaryWord;
-import com.tranhaison.englishportugesedictionary.dictionaryhelper.PortugueseDictionaryWord;
+import com.tranhaison.englishportugesedictionary.databases.utils.StringDecrypter;
 import com.tranhaison.englishportugesedictionary.dictionaryhelper.bookmarks.BookmarkWord;
 import com.tranhaison.englishportugesedictionary.dictionaryhelper.examples.ExampleSentence;
+import com.tranhaison.englishportugesedictionary.dictionaryhelper.words.DictionaryWord;
+import com.tranhaison.englishportugesedictionary.dictionaryhelper.words.EnglishDictionaryWord;
+import com.tranhaison.englishportugesedictionary.dictionaryhelper.words.PortugueseDictionaryWord;
+import com.tranhaison.englishportugesedictionary.utils.Constants;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -193,6 +194,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void openDatabase() throws SQLException {
         String my_path = DB_PATH + DB_NAME;
         mDatabase = SQLiteDatabase.openDatabase(my_path, null, SQLiteDatabase.OPEN_READWRITE);
+
+        // Case sensitive with LIKE
+        String sql = "PRAGMA case_sensitive_like = true;";
+        mDatabase.rawQuery(sql, null);
     }
 
     @Override
@@ -417,6 +422,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Get English explanation of a word
+     *
      * @param wordList_id
      * @return
      */
@@ -428,7 +434,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         + " WHERE " + COLUMN_ID + " = " + wordList_id + ";",
                 null);
 
-        if (rawQuery.getCount() > 0 && rawQuery.moveToFirst()) {
+        if (rawQuery != null && rawQuery.getCount() > 0 && rawQuery.moveToFirst()) {
             do {
                 String engExplanation = rawQuery.getString(1);
                 String engPosType = rawQuery.getString(0);
@@ -465,6 +471,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     /**
      * Get all related words (Portuguese) of an English word
+     *
      * @param wordList_id
      * @return
      */
@@ -586,14 +593,23 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             table_type = TABLE_PORTUGUESE_WORD;
         }
 
+        /*if (word.contains("'")) {
+            word.replace("'", "''");
+        }*/
+
         // Cursor to get indexWordList_id from indexWordList table
-        Cursor word_cursor = mDatabase.query(table_type,
-                new String[]{COLUMN_ID},
-                COLUMN_DISPLAY_WORD + " = '" + word + "'",
-                null,
-                null,
-                null,
-                null);
+        Cursor word_cursor = null;
+        try {
+            word_cursor = mDatabase.query(table_type,
+                    new String[]{COLUMN_ID},
+                    COLUMN_DISPLAY_WORD + " = '" + word + "'",
+                    null,
+                    null,
+                    null,
+                    null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
         if (word_cursor != null && word_cursor.moveToFirst()) {
             int wordList_id = Integer.parseInt(word_cursor.getString(0));
@@ -601,7 +617,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             word_cursor.close();
             return wordList_id;
         } else {
-            word_cursor.close();
             return -1;
         }
     }
@@ -673,15 +688,19 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             table_type = TABLE_PORTUGUESE_WORD;
         }
 
+        if (displayWord.contains("'")) {
+            displayWord = displayWord.replace("'", "");
+        }
+
         // Cursor to records in engWordList table
         Cursor cursor = mDatabase.query(table_type,
                 new String[]{COLUMN_DISPLAY_WORD},
-                COLUMN_DISPLAY_WORD + " LIKE '" + displayWord + "%'",
+                COLUMN_DISPLAY_WORD + " LIKE '" + displayWord + "%' ",
                 null,
                 null,
                 null,
                 null,
-                String.valueOf(30));
+                String.valueOf(40));
 
         ArrayList<String> suggestionList = new ArrayList<>();
 
@@ -910,10 +929,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
                 favoriteList.add(favoriteWord);
             } while (cursor.moveToNext());
-        }
 
-        cursor.close();
-        return favoriteList;
+            cursor.close();
+            return favoriteList;
+        } else {
+            cursor.close();
+            return null;
+        }
     }
 
     /**

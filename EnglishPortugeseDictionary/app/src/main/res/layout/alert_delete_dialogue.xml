@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp"
+    android:background="@drawable/custom_dialog"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="15dp"
+        android:src="@drawable/img_delete"
+        android:contentDescription="@string/todo"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="@string/do_you_want_to_delete_all_history"
+        android:textAlignment="center"
+        android:textColor="@color/colorDefault"
+        android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="20dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnCancelDelete"
+            style="?android:buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="20dp"
+            android:background="@drawable/custom_cardview_features"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingHorizontal="40dp"
+            android:text="@string/cancel"
+            android:textColor="@color/colorIcon"
+            android:textSize="14sp" tools:targetApi="m"/>
+
+        <Button
+            android:id="@+id/btnConfirmDelete"
+            style="?android:buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/custom_button"
+            android:foreground="?attr/selectableItemBackground"
+            android:paddingHorizontal="40dp"
+            android:text="@string/delete"
+            android:textSize="14sp" tools:targetApi="m"/>
+
+    </LinearLayout>
+
+</LinearLayout>

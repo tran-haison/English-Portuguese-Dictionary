@@ -1,92 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawerLayout"
+    android:id="@+id/linearLayoutRootMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     android:fitsSystemWindows="true"
-    tools:context=".activities.MainActivity"
-    >
+    tools:context=".activities.MainActivity">
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigationView"
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:theme="@style/MenuTheme"
-        app:headerLayout="@layout/menu_header"
-        app:menu="@menu/menu_navigation_drawer" />
+        android:layout_height="wrap_content"
+        android:background="@color/colorRed1"
+        android:paddingVertical="10dp">
 
-    <LinearLayout
-        android:id="@+id/linearLayoutMain"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:fontFamily="@font/poppins_semibold"
+            android:text="@string/Dictionary"
+            android:textColor="@color/white"
+            android:textSize="22sp"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
 
-        <RelativeLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="10dp"
+            android:text="@string/quickly_search_by_typing_a_word"
+            android:textColor="@color/white"
+            android:textSize="15sp"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed" />
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp">
-
-            <ImageButton
-                android:id="@+id/ibMenu"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:background="#00000000"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/ic_menu_24dp" />
-
-            <ImageView
-                android:id="@+id/ivDictionaryType"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="16dp"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/img_english_flag" />
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/tvAppName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="10dp"
-                android:fontFamily="@font/antic"
-                android:text="@string/portuguese_dictionary"
-                android:textColor="@color/colorDefault"
-                android:textSize="25sp"
-                android:textStyle="bold" />
+            android:fitsSystemWindows="true"
+            android:minHeight="58dp"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/tvAppName"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
-                android:background="@color/colorLightWhite"
-                android:padding="10dp">
+                android:layout_gravity="center_vertical"
+                android:layout_marginHorizontal="16dp"
+                android:background="@drawable/custom_searchview"
+                android:paddingVertical="5dp"
+                app:layout_collapseMode="pin">
 
-                <com.mancj.materialsearchbar.MaterialSearchBar
-                    android:id="@+id/searchBarMain"
-                    style="@style/MaterialSearchBarLight"
+                <EditText
+                    android:id="@+id/etSearchMain"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="48dp"
                     android:layout_toStartOf="@id/ibVoiceSearchMain"
-                    android:elevation="8dp"
-                    app:mt_hint="@string/search"
-                    app:mt_navIconEnabled="false"
-                    app:mt_placeholder="@string/type_a_word"
-                    app:mt_speechMode="false"
-                    tools:targetApi="lollipop"
-                    app:mt_highlightedTextColor="@color/colorPrimary" />
+                    android:background="#00000000"
+                    android:drawableStart="@drawable/ic_search_24dp"
+                    android:drawablePadding="10dp"
+                    android:focusable="false"
+                    android:hint="@string/english_or_portuguese"
+                    android:importantForAutofill="no"
+                    android:inputType="text"
+                    android:onClick="setSearchViewClicked"
+                    android:paddingHorizontal="15dp"
+                    android:transitionName="search_activity" />
 
                 <ImageButton
                     android:id="@+id/ibVoiceSearchMain"
@@ -95,16 +74,339 @@
                     android:layout_alignParentEnd="true"
                     android:background="#00000000"
                     android:contentDescription="@string/todo"
-                    android:src="@drawable/ic_voice_24dp" />
+                    android:foreground="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="speechToText"
+                    android:src="@drawable/ic_speech_24dp"
+                    android:tint="@color/colorRed1"
+                    tools:targetApi="m" />
+
             </RelativeLayout>
 
-        </RelativeLayout>
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
 
-        <FrameLayout
-            android:id="@+id/frameLayoutContainerGeneral"
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            android:background="@color/colorRed1"
+            android:orientation="vertical">
 
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/custom_background_1"
+                android:orientation="vertical">
 
-</androidx.drawerlayout.widget.DrawerLayout>
+                <TextView
+                    android:id="@+id/tvCurrentDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="@string/_15_09_2020"
+                    android:textColor="@color/colorRed1" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvRandomWord"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:fontFamily="@font/bitter"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:includeFontPadding="false"
+                        android:onClick="viewRandomWordDetail"
+                        android:text="@string/Dictionary"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="26sp"
+                        android:textStyle="bold"
+                        tools:targetApi="m" />
+
+                    <ImageButton
+                        android:id="@+id/ivRefresh"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="#00000000"
+                        android:contentDescription="@string/todo"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:onClick="refreshRandomWord"
+                        android:padding="5dp"
+                        android:src="@drawable/ic_refresh_24dp"
+                        android:tint="@color/colorRed1"
+                        tools:targetApi="m" />
+
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/tvRandomWordDefinition"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="25dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:text="@string/welcome_to_english_portuguese_dictionary"
+                    android:textAlignment="center"
+                    android:textSize="16sp" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="20dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/linearLayoutWordLookUp"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:background="@drawable/custom_cardview_features"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:gravity="center"
+                        android:onClick="goToOnlineSearchingActivity"
+                        android:orientation="vertical"
+                        tools:targetApi="m">
+
+                        <ImageView
+                            android:id="@+id/ivSearchIcon"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center_horizontal"
+                            android:background="#00000000"
+                            android:contentDescription="@string/todo"
+                            android:src="@drawable/ic_search"
+                            android:transitionName="online_searching_activity"
+                            app:tint="#C37B80" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/word_look_up"
+                            android:textColor="#C37B80"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayoutTextTranslation"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/custom_cardview_features"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:gravity="center"
+                        android:onClick="goToTextTranslationActivity"
+                        android:orientation="vertical"
+                        tools:targetApi="m">
+
+                        <ImageView
+                            android:id="@+id/ivTranslateIcon"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center_horizontal"
+                            android:background="#00000000"
+                            android:contentDescription="@string/todo"
+                            android:src="@drawable/ic_translate_24dp"
+                            android:transitionName="text_translation_activity"
+                            app:tint="#C37B80" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/text_translation"
+                            android:textColor="#C37B80"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayoutHistory"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/custom_cardview_features"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:gravity="center"
+                        android:onClick="goToHistoryActivity"
+                        android:orientation="vertical"
+                        tools:targetApi="m">
+
+                        <ImageView
+                            android:id="@+id/ivHistoryIcon"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center_horizontal"
+                            android:background="#00000000"
+                            android:contentDescription="@string/todo"
+                            android:src="@drawable/ic_history"
+                            android:transitionName="history_activity"
+                            app:tint="#C37B80" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/history"
+                            android:textColor="#C37B80"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/linearLayoutFavorite"
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_marginStart="10dp"
+                        android:background="@drawable/custom_cardview_features"
+                        android:foreground="?attr/selectableItemBackgroundBorderless"
+                        android:gravity="center"
+                        android:onClick="goToFavoriteActivity"
+                        android:orientation="vertical"
+                        tools:targetApi="m">
+
+                        <ImageView
+                            android:id="@+id/ivFavoriteIcon"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_gravity="center_horizontal"
+                            android:background="#00000000"
+                            android:contentDescription="@string/todo"
+                            android:src="@drawable/ic_favorite_flag_24dp"
+                            android:transitionName="favorite_activity"
+                            app:tint="#C37B80" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/favorite"
+                            android:textColor="#C37B80"
+                            android:textSize="15sp" />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <com.facebook.ads.NativeAdLayout
+                    android:id="@+id/nativeAdLayoutMain"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/ggUnifiedAdContainerMain"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:visibility="gone"
+                    app:cardCornerRadius="10dp"
+                    app:cardElevation="3dp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="10dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_toStartOf="@id/tvSeeAll"
+                        android:text="@string/Favorite"
+                        android:textColor="@color/colorDefault"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvSeeAll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        android:onClick="goToFavoriteActivity"
+                        android:text="@string/see_all"
+                        android:transitionName="favorite_activity" />
+
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewFavorite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/like_this_app"
+                    android:textColor="@color/colorDefault"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="15dp"
+                    android:gravity="center"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/tvRateUs"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="3dp"
+                        android:gravity="center_vertical"
+                        android:onClick="rateApp"
+                        android:text="@string/rate_us"
+                        android:textColor="@color/colorRed3"
+                        android:textSize="16sp"
+                        app:drawableStartCompat="@drawable/ic_stars_24dp"
+                        app:drawableTint="@color/colorRed1" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:layout_marginHorizontal="10dp"
+                        android:text="@string/or"
+                        android:textColor="@color/colorBlack"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/tvShare"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="3dp"
+                        android:gravity="center_vertical"
+                        android:onClick="shareApp"
+                        android:text="@string/share_this_app"
+                        android:textColor="@color/colorRed3"
+                        android:textSize="16sp"
+                        app:drawableStartCompat="@drawable/ic_share_24dp"
+                        app:drawableTint="@color/colorRed1" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

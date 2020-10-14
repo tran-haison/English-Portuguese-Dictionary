@@ -1,59 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.SplashScreenActivity"
-    android:background="#fdcd67">
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:gravity="center"
+    tools:context=".activities.SplashScreenActivity">
 
     <ImageView
         android:id="@+id/imageViewAppLogo"
-        android:layout_width="0dp"
-        android:layout_height="400dp"
-        android:layout_marginStart="32dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_width="144dp"
+        android:layout_height="144dp"
         android:background="@null"
         android:contentDescription="@string/todo"
-        android:src="@drawable/lg_book"
-        android:transitionName="app_logo"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:src="@drawable/logo_dictionary"
         tools:targetApi="lollipop" />
 
     <TextView
         android:id="@+id/textViewAppName"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="16dp"
-        android:transitionName="app_name"
-        android:fontFamily="@font/bangers"
-        android:includeFontPadding="false"
-        android:text="@string/portuguese_dictionary"
+        android:layout_marginTop="15dp"
+        android:text="@string/english_portuguese"
         android:textAlignment="center"
-        android:textSize="35sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewAppLogo" tools:targetApi="lollipop"/>
+        android:textColor="@color/colorBlack"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        tools:targetApi="lollipop" />
 
     <TextView
         android:id="@+id/textViewSlogan"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
         android:fontFamily="@font/antic"
-        android:text="@string/a_simple_dictionary_app"
-        android:textSize="25sp"
+        android:text="@string/Dictionary"
         android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textViewAppName" />
+        android:textSize="22sp" />
 
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

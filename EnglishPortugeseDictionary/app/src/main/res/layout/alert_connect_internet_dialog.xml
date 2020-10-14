@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="15dp"
+    android:background="@drawable/custom_dialog"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tvPromptConnectInternet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/poppins_semibold"
+        android:text="@string/please_connect_to_the_internet_to_proceed_further"
+        android:textColor="@color/colorDefault" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnConnectInternet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:background="#00000000"
+            android:foreground="?attr/selectableItemBackground"
+            android:text="@string/connect"
+            android:textAllCaps="false"
+            android:textColor="@color/colorRed1" tools:targetApi="m"/>
+
+        <Button
+            android:id="@+id/btnCancelConnectInternet"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@id/btnConnectInternet"
+            android:background="#00000000"
+            android:foreground="?attr/selectableItemBackground"
+            android:text="@string/cancel"
+            android:textAllCaps="false"
+            android:textColor="@color/colorIcon" tools:targetApi="m"/>
+    </RelativeLayout>
+
+</LinearLayout>
+

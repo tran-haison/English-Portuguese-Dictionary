@@ -1,118 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.detailactivity.DefinitionFragment">
+    android:background="@color/white"
+    tools:context=".fragments.DefinitionFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="25dp">
+        android:paddingTop="15dp"
+        android:paddingBottom="10dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginBottom="5dp">
+
+            <TextView
+                android:id="@+id/tvDictionaryWord"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toStartOf="@id/ivSpeakerDetail"
+                android:fontFamily="@font/poppins_semibold"
+                android:text="@string/portuguese_dictionary"
+                android:textColor="@color/colorRed1"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/ivSpeakerDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="10dp"
+                android:layout_toStartOf="@id/ivCopyDetail"
+                android:contentDescription="@string/todo"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="5dp"
+                android:src="@drawable/ic_speaker_24dp"
+                tools:targetApi="m" />
+
+            <ImageView
+                android:id="@+id/ivCopyDetail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:contentDescription="@string/todo"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="5dp"
+                android:src="@drawable/ic_copy_border_24dp"
+                tools:targetApi="m" />
+
+        </RelativeLayout>
 
         <LinearLayout
             android:id="@+id/linearLayoutUSPhonetic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_marginHorizontal="20dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="US"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="22sp"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginEnd="10dp"
+                android:text="@string/us"
+                android:textColor="@color/colorDefault"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tvUSPhonetic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
                 android:text="@string/benifit"
                 android:textColor="@color/colorDefault"
-                android:textSize="18sp"
-                android:layout_marginEnd="10dp"/>
+                android:textSize="17sp" />
 
             <ImageView
                 android:id="@+id/ivSpeakerUS"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:contentDescription="@string/todo"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="5dp"
                 android:src="@drawable/ic_speaker_24dp"
-                android:layout_gravity="bottom"/>
+                tools:targetApi="m" />
 
         </LinearLayout>
 
         <LinearLayout
+            android:gravity="center_vertical"
             android:id="@+id/linearLayoutUKPhonetic"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginBottom="20dp">
+            android:layout_marginHorizontal="20dp"
+            android:orientation="horizontal">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="UK"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="22sp"
-                android:layout_marginEnd="10dp"/>
+                android:layout_marginEnd="10dp"
+                android:text="@string/uk"
+                android:textColor="@color/colorDefault"
+                android:textSize="18sp" />
 
             <TextView
                 android:id="@+id/tvUKPhonetic"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
                 android:text="@string/benifit"
                 android:textColor="@color/colorDefault"
-                android:textSize="18sp"
-                android:layout_marginEnd="10dp"/>
+                android:textSize="17sp" />
 
             <ImageView
                 android:id="@+id/ivSpeakerUK"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_speaker_24dp"
-                android:layout_gravity="bottom"/>
+                android:layout_gravity="bottom"
+                android:contentDescription="@string/todo"
+                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:padding="5dp"
+                android:src="@drawable/ic_speaker_24dp" />
 
         </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/definition"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="22sp" />
-
-        <TextView
-            android:id="@+id/tvExplanation"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:layout_marginBottom="20dp"
-            android:text="@string/example_definition"
-            android:textColor="@color/colorDefault"
-            android:textSize="18sp" />
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginTop="15dp"
+            android:layout_marginBottom="5dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
 
-        <TextView
-            android:id="@+id/tvGrammarsPrompt"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="10dp"
-            android:text="@string/grammars"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="22sp" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/tvGrammars"
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGray"
+                    android:includeFontPadding="false"
+                    android:padding="10dp"
+                    android:text="@string/definition"
+                    android:textColor="@color/colorRed1"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tvExplanation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="25dp"
+                    android:layout_marginVertical="10dp"
+                    android:text="@string/example_definition"
+                    android:textColor="@color/colorDefault"
+                    android:textSize="18sp" />
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <com.facebook.ads.NativeAdLayout
+            android:id="@+id/nativeAdLayoutDefinition"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/ggUnifiedAdContainerDefinition"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginEnd="15dp"
-            android:text="@string/example_definition"
-            android:textColor="@color/colorDefault"
-            android:textSize="18sp" />
+            android:layout_margin="10dp"
+            android:visibility="gone"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp" />
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/cvGrammars"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="10dp"
+            android:layout_marginVertical="5dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorLightGray"
+                    android:includeFontPadding="false"
+                    android:padding="10dp"
+                    android:text="@string/grammars"
+                    android:textColor="@color/colorRed1"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:id="@+id/tvGrammars"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="25dp"
+                    android:layout_marginVertical="10dp"
+                    android:text="@string/example_definition"
+                    android:textColor="@color/colorDefault"
+                    android:textSize="18sp" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
 
     </LinearLayout>
 

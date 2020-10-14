@@ -1,147 +1,178 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayoutDetail"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorRed1"
+    android:orientation="vertical"
+    android:transitionName="transition_detail"
     tools:context=".activities.DetailActivity"
-    android:id="@+id/constrainLayoutDetail"
-    android:transitionName="transition_detail" tools:targetApi="lollipop">
+    tools:targetApi="lollipop">
 
     <RelativeLayout
         android:id="@+id/relativeLayoutToolBar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/white"
-        android:padding="5dp">
-        
+        android:layout_height="?attr/actionBarSize">
+
         <ImageButton
-            style="?attr/materialButtonStyle"
             android:id="@+id/ibBack"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_centerVertical="true"
-            android:src="@drawable/ic_back_24dp"
             android:background="#00000000"
-            android:contentDescription="@string/todo" />
-        
-        <ImageButton
-            style="?attr/materialButtonStyle"
-            android:id="@+id/ibFavorite"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_centerVertical="true"
-            android:layout_alignParentEnd="true"
             android:contentDescription="@string/todo"
-            android:src="@drawable/ic_favorite_border_24dp"
-            android:background="#00000000" />
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_back_24dp"
+            android:tint="@color/white"
+            tools:targetApi="m" />
+
+        <TextView
+            android:id="@+id/tvWordDetail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/ivFlagDictionaryType"
+            android:layout_toEndOf="@id/ibBack"
+            android:ellipsize="end"
+            android:fontFamily="@font/poppins_semibold"
+            android:maxLines="1"
+            android:text="@string/examples"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="22sp" />
+
+        <ImageView
+            android:id="@+id/ivFlagDictionaryType"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="16dp"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/img_england_flag" />
 
     </RelativeLayout>
 
     <LinearLayout
-        android:background="@color/colorLightWhite"
-        android:id="@+id/linearLayoutSearch"
+        android:id="@+id/linearLayoutToolBarIcon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/relativeLayoutToolBar"
-        android:orientation="vertical">
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:orientation="horizontal">
 
         <RelativeLayout
+            android:id="@+id/relativeLayoutSearchDetail"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:background="@drawable/custom_searchview"
+            android:visibility="gone">
 
-            <com.mancj.materialsearchbar.MaterialSearchBar
-                android:id="@+id/searchBarDetail"
+            <EditText
+                android:textCursorDrawable="@null"
+                android:id="@+id/etSearchDetail"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toStartOf="@id/ibVoiceSearch"
-                style="@style/MaterialSearchBarLight"
-                android:elevation="8dp"
-                app:mt_hint="@string/search"
-                app:mt_navIconEnabled="false"
-                app:mt_placeholder="@string/type_a_word"
-                app:mt_speechMode="false"
-                tools:targetApi="lollipop" />
+                android:layout_height="48dp"
+                android:layout_toStartOf="@id/ibCloseSearchDetail"
+                android:background="#00000000"
+                android:drawableStart="@drawable/ic_search_24dp"
+                android:drawablePadding="5dp"
+                android:drawableTint="@color/colorIcon"
+                android:gravity="center_vertical"
+                android:hint="@string/type_a_word"
+                android:imeOptions="actionSearch"
+                android:importantForAutofill="no"
+                android:inputType="text"
+                android:paddingHorizontal="15dp"
+                android:textColor="@color/colorDefault"
+                android:textColorHighlight="@color/colorRed3"
+                tools:targetApi="m" />
 
             <ImageButton
-                style="?attr/materialButtonStyle"
-                android:id="@+id/ibVoiceSearch"
+                android:id="@+id/ibCloseSearchDetail"
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/ic_voice_24dp"
                 android:background="#00000000"
-                android:contentDescription="@string/todo"/>
+                android:contentDescription="@string/todo"
+                android:foreground="?attr/selectableItemBackground"
+                android:src="@drawable/ic_close_24dp"
+                android:tint="@color/colorIcon" />
 
         </RelativeLayout>
 
-        <TextView
-            android:id="@+id/tvDictionaryWord"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@string/portuguese_dictionary"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorDefault"
-            android:textAlignment="center"
-            android:fontFamily="@font/antic"
-            android:includeFontPadding="false" />
+        <ImageButton
+            android:id="@+id/ibSearchInDetail"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:background="@drawable/custom_cardview_features"
+            android:contentDescription="@string/todo"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_search_red_24dp"
+            tools:targetApi="m" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="end">
+        <ImageButton
+            android:id="@+id/ibSearchOnline"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/custom_cardview_features"
+            android:contentDescription="@string/todo"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_online_24dp"
+            android:tint="@color/colorRed3"
+            tools:targetApi="m" />
 
-            <ImageView
-                android:id="@+id/ivSpeakerDetail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_speaker_24dp"
-                android:contentDescription="@string/todo"
-                android:layout_gravity="center"
-                android:layout_marginEnd="5dp"/>
+        <ImageButton
+            android:id="@+id/ibVoiceSearch"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/custom_cardview_features"
+            android:contentDescription="@string/todo"
+            android:foreground="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_speech_24dp"
+            android:tint="@color/colorRed3"
+            tools:targetApi="m" />
 
-            <ImageView
-                android:id="@+id/ivCopyDetail"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:contentDescription="@string/todo"
-                android:src="@drawable/ic_copy_24dp"/>
-
-        </LinearLayout>
+        <ImageButton
+            android:id="@+id/ibFavorite"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/custom_cardview_features"
+            android:contentDescription="@string/todo"
+            android:src="@drawable/ic_favorite_border_24dp" />
 
     </LinearLayout>
+
+    <ListView
+        android:id="@+id/listViewSuggestion"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:visibility="gone" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/linearLayoutSearch"
-        app:tabGravity="center"
-        app:tabIndicatorColor="@color/colorTabIndicator"
-        app:tabMode="fixed"
-        app:tabSelectedTextColor="@color/colorPrimaryDark"
-        app:tabTextColor="@color/colorDefault" />
+        android:background="@drawable/custom_background_1"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/colorRed1"
+        app:tabMode="auto"
+        app:tabSelectedTextColor="@color/colorRed1"
+        app:tabTextAppearance="@style/TabTextAppearance"
+        app:tabTextColor="#91918E" />
 
     <androidx.viewpager.widget.ViewPager
-        android:background="@color/white"
         android:id="@+id/viewPagerContainer"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tabLayout"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

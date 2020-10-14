@@ -2,15 +2,42 @@
 <resources>
     <color name="colorPrimary">#fdcd67</color>
     <color name="colorPrimaryDark">#EFBA3D</color>
-    <color name="colorAccent">#ffffff</color>
+    <color name="colorAccent">#000000</color>
 
-    <!-- Colors for background and card view -->
+    <!-- Colors for background and text -->
+    <color name="white">#ffffff</color>
     <color name="colorWhite">#ffffff</color>
-    <color name="colorLightWhite">#F4F2F2</color>
+    <color name="colorLightWhite">#FCF5E8</color>
     <color name="colorBlack">#000000</color>
-    <color name="colorOrange">#F69316</color>
-
-    <!-- Colors for text and view pager -->
-    <color name="colorTabIndicator">#AC7602</color>
     <color name="colorDefault">#34332A</color>
+    <color name="colorGray">#4AEFEFEA</color>
+    <color name="colorLightGray">#F6F7F9</color>
+
+    <!-- Color for icon -->
+    <color name="colorIcon">#545450</color>
+
+    <!-- Blue color -->
+    <color name="colorBlue1">#A0CEF8</color>
+    <color name="colorBlue2">#55ccfc</color>
+    <color name="colorBlue3">#30a5f5</color>
+    <color name="colorBlue4">#0097FF</color>
+    <color name="colorBlue5">#113BDF</color>
+
+    <!-- Green color -->
+    <color name="colorGreen1">#CEF3E1</color>
+    <color name="colorGreen2">#79F3B7</color>
+    <color name="colorGreen3">#3BF499</color>
+    <color name="colorGreen4">#00FF82</color>
+
+    <!-- Red color -->
+    <color name="colorRed1">#960510</color>
+    <color name="colorRed2">#cd0916</color>
+    <color name="colorRed3">#C37B80</color>
+    <color name="colorRed4">#F3EDDF</color>
+
+    <!-- Yellow color -->
+    <color name="colorMain1">#fce302</color>
+    <color name="colorMain2">#ffc501</color>
+    <color name="colorMain3">#E77003</color>
+
 </resources>

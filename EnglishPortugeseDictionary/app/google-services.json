@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "187535665162",
+    "firebase_url": "https://planar-root-287204.firebaseio.com",
+    "project_id": "planar-root-287204",
+    "storage_bucket": "planar-root-287204.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:187535665162:android:562b445517f5b4f6c317f3",
+        "android_client_info": {
+          "package_name": "com.tranhaison.englishportugesedictionary"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "187535665162-ngpv00iomvljhig4k2hevjg2l82jjdsp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQl3LrrSQqV5N-pZFdHtxb1Fv-z_LjNJY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "187535665162-ngpv00iomvljhig4k2hevjg2l82jjdsp.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

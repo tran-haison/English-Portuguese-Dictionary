@@ -1,66 +1,67 @@
 package com.tranhaison.englishportugesedictionary.activities;
 
-import android.app.ActivityOptions;
-import android.content.ClipData;
-import android.content.ClipboardManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.speech.RecognizerIntent;
-import android.speech.tts.TextToSpeech;
-import android.util.Pair;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
-import com.google.mlkit.nl.translate.TranslateLanguage;
-import com.mancj.materialsearchbar.MaterialSearchBar;
-import com.tranhaison.englishportugesedictionary.Constants;
+import com.tranhaison.englishportugesedictionary.utils.Constants;
+import com.tranhaison.englishportugesedictionary.utils.CountryRegion;
+import com.tranhaison.englishportugesedictionary.utils.texttospeech.GoogleTextToSpeech;
 import com.tranhaison.englishportugesedictionary.R;
-import com.tranhaison.englishportugesedictionary.adapters.ViewPagerAdapter;
+import com.tranhaison.englishportugesedictionary.utils.texttospeech.LocalTextToSpeech;
+import com.tranhaison.englishportugesedictionary.utils.Utils;
+import com.tranhaison.englishportugesedictionary.adapters.detailactivity.ViewPagerAdapter;
 import com.tranhaison.englishportugesedictionary.databases.DatabaseHelper;
-import com.tranhaison.englishportugesedictionary.databases.LoadDatabase;
-import com.tranhaison.englishportugesedictionary.dictionaryhelper.DictionaryWord;
+import com.tranhaison.englishportugesedictionary.databases.utils.LoadDatabase;
+import com.tranhaison.englishportugesedictionary.dictionaryhelper.words.DictionaryWord;
 import com.tranhaison.englishportugesedictionary.dictionaryhelper.bookmarks.BookmarkWord;
-import com.tranhaison.englishportugesedictionary.fragments.detailactivity.DefinitionFragment;
-import com.tranhaison.englishportugesedictionary.fragments.detailactivity.ExampleFragment;
-import com.tranhaison.englishportugesedictionary.fragments.detailactivity.ExplanationFragment;
-import com.tranhaison.englishportugesedictionary.fragments.detailactivity.SynonymFragment;
+import com.tranhaison.englishportugesedictionary.fragments.DefinitionFragment;
+import com.tranhaison.englishportugesedictionary.fragments.ExampleFragment;
+import com.tranhaison.englishportugesedictionary.fragments.ExplanationFragment;
+import com.tranhaison.englishportugesedictionary.fragments.SynonymFragment;
 import com.tranhaison.englishportugesedictionary.interfaces.FragmentListener;
 
-import java.io.InputStream;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class DetailActivity extends AppCompatActivity {
 
     // Init Views and Layouts
-    ImageButton ibBack, ibFavorite, ibVoiceSearch;
-    MaterialSearchBar searchBarDetail;
+    ImageButton ibBack, ibFavorite, ibVoiceSearch, ibSearchOnline, ibSearchInDetail, ibCloseSearchDetail;
     TabLayout tabLayout;
     ViewPager viewPagerContainer;
-    TextView tvDictionaryWord;
-    ImageView ivSpeakerDetail, ivCopyDetail;
-    ConstraintLayout constrainLayoutDetail;
-
-    // Init Adapter
+    ImageView ivFlagDictionaryType;
+    ListView listViewSuggestion;
+    LinearLayout linearLayoutDetail, linearLayoutToolBarIcon;
+    TextView tvWordDetail;
+    RelativeLayout relativeLayoutSearchDetail;
+    EditText etSearchDetail;
     ViewPagerAdapter viewPagerAdapter;
 
-    // Init database helper
-    DatabaseHelper databaseHelper;
-
     // Init text to speech
-    TextToSpeech textToSpeech;
+    LocalTextToSpeech localTextToSpeech;
+    GoogleTextToSpeech googleTextToSpeech;
 
     // Init Fragments
     DefinitionFragment definitionFragment;
@@ -69,13 +70,16 @@ public class DetailActivity extends AppCompatActivity {
     ExampleFragment exampleFragment;
 
     // Init global variables
-    private int dictionary_type;
+    private int dictionary_type, synonym_type, flag_type;
     private DictionaryWord dictionaryWord;
+    DatabaseHelper databaseHelper;
+
+    ArrayAdapter<String> suggestionAdapter;
+    ArrayList<String> suggestionList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_detail);
 
         // Map Views from layout file
@@ -85,9 +89,13 @@ public class DetailActivity extends AppCompatActivity {
         openDatabase();
 
         // Get a word from MainActivity
-        boolean isExisted = getDataFromMainActivity();
+        getDataFromActivity();
+        CountryRegion.setCountryFlagIcon(this);
 
-        // Init Fragments
+        // Init tts instances
+        initTextToSpeech();
+
+        // Fragments
         initFragments();
         handleFragmentEvents();
 
@@ -97,11 +105,11 @@ public class DetailActivity extends AppCompatActivity {
         // Handle events
         setSpeechRecognizer();
         setSearchAction();
+        setViewVisibility();
+        changeFlagType();
         addToFavorite();
-        copyToClipboard();
         returnToPreviousActivity();
-        initTextToSpeech();
-        speakWord();
+        goToOnlineSearchingActivity();
     }
 
     /**
@@ -111,13 +119,18 @@ public class DetailActivity extends AppCompatActivity {
         ibBack = findViewById(R.id.ibBack);
         ibFavorite = findViewById(R.id.ibFavorite);
         ibVoiceSearch = findViewById(R.id.ibVoiceSearch);
-        searchBarDetail = findViewById(R.id.searchBarDetail);
+        ibSearchOnline = findViewById(R.id.ibSearchOnline);
+        ibSearchInDetail = findViewById(R.id.ibSearchInDetail);
         tabLayout = findViewById(R.id.tabLayout);
         viewPagerContainer = findViewById(R.id.viewPagerContainer);
-        tvDictionaryWord = findViewById(R.id.tvDictionaryWord);
-        ivSpeakerDetail = findViewById(R.id.ivSpeakerDetail);
-        ivCopyDetail = findViewById(R.id.ivCopyDetail);
-        constrainLayoutDetail = findViewById(R.id.constrainLayoutDetail);
+        ivFlagDictionaryType = findViewById(R.id.ivFlagDictionaryType);
+        listViewSuggestion = findViewById(R.id.listViewSuggestion);
+        linearLayoutDetail = findViewById(R.id.linearLayoutDetail);
+        linearLayoutToolBarIcon = findViewById(R.id.linearLayoutToolBarIcon);
+        tvWordDetail = findViewById(R.id.tvWordDetail);
+        ibCloseSearchDetail = findViewById(R.id.ibCloseSearchDetail);
+        relativeLayoutSearchDetail = findViewById(R.id.relativeLayoutSearchDetail);
+        etSearchDetail = findViewById(R.id.etSearchDetail);
     }
 
     /**
@@ -144,12 +157,19 @@ public class DetailActivity extends AppCompatActivity {
      *
      * @return
      */
-    private boolean getDataFromMainActivity() {
+    private boolean getDataFromActivity() {
         Intent intent = getIntent();
 
         // Get data from MainActivity
         dictionary_type = intent.getIntExtra(Constants.DICTIONARY_TYPE, Constants.ENG_POR);
         int wordList_id = intent.getIntExtra(Constants.WORD_LIST_ID, -1);
+
+        // Set synonym type opposite to dictionary type
+        if (dictionary_type == Constants.ENG_POR) {
+            synonym_type = Constants.POR_ENG;
+        } else if (dictionary_type == Constants.POR_ENG) {
+            synonym_type = Constants.ENG_POR;
+        }
 
         if (wordList_id != -1) {
             // Get information of a word
@@ -157,19 +177,22 @@ public class DetailActivity extends AppCompatActivity {
             String word = dictionaryWord.getDisplayWord();
             String explanation = dictionaryWord.getExplanations();
 
-            // Set text to views
-            tvDictionaryWord.setText(word);
-
             // Add a word to list of recent words
             databaseHelper.insertHistory(wordList_id, word, explanation, dictionary_type);
 
-            // Check to see if this word is already in list of Favorite
-            // then set ivFavorite to the corresponding state
-            BookmarkWord isFavoriteWord = databaseHelper.getFavorite(wordList_id);
-            if (isFavoriteWord != null) {
-                ibFavorite.setImageResource(R.drawable.ic_favorite_red_24dp);
-            } else {
-                ibFavorite.setImageResource(R.drawable.ic_favorite_border_24dp);
+            // Set the favorite image based on the id of word
+            setFavoriteImage(wordList_id);
+
+            // Set text to tv
+            tvWordDetail.setText(word);
+
+            // Set flag based on dictionary type
+            if (dictionary_type == Constants.ENG_POR) {
+                flag_type = Constants.ENG_POR;
+                ivFlagDictionaryType.setImageResource(R.drawable.img_england_flag);
+            } else if (dictionary_type == Constants.POR_ENG) {
+                flag_type = Constants.POR_ENG;
+                ivFlagDictionaryType.setImageResource(R.drawable.img_portugal_flag);
             }
 
             return true;
@@ -179,30 +202,48 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     /**
-     * Init new Fragments and set default fragment to DefinitionFragment
+     * Check to see if this word is already in list of Favorite
+     * then set ivFavorite to the corresponding state
+     *
+     * @param wordList_id
      */
-    private void initFragments() {
-        definitionFragment = new DefinitionFragment(databaseHelper, dictionaryWord, dictionary_type);
-        synonymFragment = new SynonymFragment(databaseHelper, dictionaryWord, dictionary_type);
-        explanationFragment = new ExplanationFragment(databaseHelper, dictionary_type, dictionaryWord);
-        exampleFragment = new ExampleFragment(databaseHelper, dictionaryWord);
+    private void setFavoriteImage(int wordList_id) {
+        BookmarkWord isFavoriteWord = databaseHelper.getFavorite(wordList_id);
+        if (isFavoriteWord != null) {
+            ibFavorite.setImageResource(R.drawable.ic_favorite_red_24dp);
+        } else {
+            ibFavorite.setImageResource(R.drawable.ic_favorite_border_24dp);
+        }
     }
 
     /**
-     * Add Fragments to ViewPagerAdapter and display with TabLayout
+     * Init TTS instance with language depending on the dictionary type
      */
-    private void setUpViewPager() {
-        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+    private void initTextToSpeech() {
+        // Online text to speech audio
+        googleTextToSpeech = new GoogleTextToSpeech(this);
 
-        // Add Fragments
-        viewPagerAdapter.addFragment(definitionFragment, "Definition");
-        viewPagerAdapter.addFragment(explanationFragment, "Explain");
-        viewPagerAdapter.addFragment(exampleFragment, "Example");
-        viewPagerAdapter.addFragment(synonymFragment, "Synonym");
+        // Local text to speech audio
+        localTextToSpeech = new LocalTextToSpeech(this);
+        localTextToSpeech.initialize();
+    }
 
-        // Adapter setup
-        viewPagerContainer.setAdapter(viewPagerAdapter);
-        tabLayout.setupWithViewPager(viewPagerContainer);
+    /**
+     * Init new Fragments and set default fragment to DefinitionFragment
+     */
+    private void initFragments() {
+        definitionFragment = new DefinitionFragment(databaseHelper, dictionaryWord, dictionary_type,
+                localTextToSpeech, googleTextToSpeech);
+
+        explanationFragment = new ExplanationFragment(databaseHelper, dictionary_type, dictionaryWord,
+                localTextToSpeech, googleTextToSpeech);
+
+        exampleFragment = new ExampleFragment(databaseHelper, dictionaryWord.getWordList_id(), dictionaryWord.getDisplayWord(),
+                dictionary_type, localTextToSpeech, googleTextToSpeech);
+
+        synonymFragment = new SynonymFragment(databaseHelper, dictionaryWord, dictionary_type,
+                localTextToSpeech, googleTextToSpeech);
+
     }
 
     /**
@@ -212,7 +253,15 @@ public class DetailActivity extends AppCompatActivity {
         synonymFragment.setOnFragmentListener(new FragmentListener() {
             @Override
             public void onItemClick(String value) {
-                Toast.makeText(DetailActivity.this, value, Toast.LENGTH_SHORT).show();
+                if (synonym_type == Constants.POR_ENG) {
+                    synonym_type = Constants.ENG_POR;
+                    dictionary_type = Constants.POR_ENG;
+                } else if (synonym_type == Constants.ENG_POR) {
+                    synonym_type = Constants.POR_ENG;
+                    dictionary_type = Constants.ENG_POR;
+                }
+
+                goToDetailActivity(value);
             }
 
             @Override
@@ -220,6 +269,23 @@ public class DetailActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    /**
+     * Add Fragments to ViewPagerAdapter and display with TabLayout
+     */
+    private void setUpViewPager() {
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+
+        // Add Fragments
+        viewPagerAdapter.addFragment(definitionFragment, getString(R.string.definition));
+        viewPagerAdapter.addFragment(explanationFragment, getString(R.string.explanation));
+        viewPagerAdapter.addFragment(exampleFragment, getString(R.string.example));
+        viewPagerAdapter.addFragment(synonymFragment, getString(R.string.synonym));
+
+        // Adapter setup
+        viewPagerContainer.setAdapter(viewPagerAdapter);
+        tabLayout.setupWithViewPager(viewPagerContainer);
     }
 
     /**
@@ -231,48 +297,16 @@ public class DetailActivity extends AppCompatActivity {
             public void onClick(View view) {
                 // Call speech intent
                 Intent speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, R.string.speech_recognizer);
-                startActivityForResult(speechIntent, Constants.REQUEST_SPEECH_RECOGNIZER);
-            }
-        });
-    }
 
-    /**
-     * Init TTS instance with language depending on the dictionary type
-     */
-    private void initTextToSpeech() {
-        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int i) {
-                if (i == TextToSpeech.SUCCESS) {
-
-                    int result;
-                    if (dictionary_type == Constants.POR_ENG) {
-                        result = textToSpeech.setLanguage(new Locale("pt", "POR"));
-                    } else {
-                        result = textToSpeech.setLanguage(Locale.ENGLISH);
-                    }
-
-                    if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                        Toast.makeText(DetailActivity.this, "Language not supported", Toast.LENGTH_SHORT).show();
-                    }
+                if (flag_type == Constants.ENG_POR) {
+                    speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.ENGLISH.toString());
+                    speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, Constants.ENGLISH_SPEECH_RECOGNIZER_PROMPT);
                 } else {
-                    Toast.makeText(DetailActivity.this, "Initialize failed", Toast.LENGTH_SHORT).show();
+                    speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, new Locale("pt", "POR").toString());
+                    speechIntent.putExtra(RecognizerIntent.EXTRA_PROMPT, Constants.PORTUGUESE_SPEECH_RECOGNIZER_PROMPT);
                 }
-            }
-        });
-    }
-
-    /**
-     * Speak a word when pressing button
-     */
-    private void speakWord() {
-        ivSpeakerDetail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String word = dictionaryWord.getDisplayWord();
-                textToSpeech.speak(word, TextToSpeech.QUEUE_FLUSH, null);
+                //speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                startActivityForResult(speechIntent, Constants.REQUEST_SPEECH_RECOGNIZER);
             }
         });
     }
@@ -281,19 +315,148 @@ public class DetailActivity extends AppCompatActivity {
      * Handle search action event
      */
     private void setSearchAction() {
-        searchBarDetail.setOnSearchActionListener(new MaterialSearchBar.OnSearchActionListener() {
+        etSearchDetail.addTextChangedListener(new TextWatcher() {
             @Override
-            public void onSearchStateChanged(boolean enabled) {
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
             }
 
             @Override
-            public void onSearchConfirmed(CharSequence text) {
-                String word = text.toString();
-                goToDetailActivity(word);
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                String newText = charSequence.toString();
+
+                if (newText.isEmpty()) {
+                    listViewSuggestion.setVisibility(View.GONE);
+                } else {
+                    listViewSuggestion.setVisibility(View.VISIBLE);
+
+                    // Get suggestions each time the input text is changed
+                    resetSuggestedList(newText);
+
+                    // List view item clicked
+                    // Get the word and pass to DetailActivity
+                    listViewSuggestion.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                            if (flag_type == Constants.ENG_POR) {
+                                dictionary_type = Constants.ENG_POR;
+                                synonym_type = Constants.POR_ENG;
+                            } else if (flag_type == Constants.POR_ENG) {
+                                dictionary_type = Constants.POR_ENG;
+                                synonym_type = Constants.ENG_POR;
+                            }
+
+                            goToDetailActivity(suggestionList.get(i));
+                        }
+                    });
+                }
             }
 
             @Override
-            public void onButtonClicked(int buttonCode) {
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
+        etSearchDetail.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int actionId, KeyEvent keyEvent) {
+                if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                    if (flag_type == Constants.ENG_POR) {
+                        dictionary_type = Constants.ENG_POR;
+                        synonym_type = Constants.POR_ENG;
+                    } else if (flag_type == Constants.POR_ENG) {
+                        dictionary_type = Constants.POR_ENG;
+                        synonym_type = Constants.ENG_POR;
+                    }
+
+                    String word = etSearchDetail.getText().toString();
+                    goToDetailActivity(word);
+
+                    return true;
+                }
+                return false;
+            }
+        });
+    }
+
+    /**
+     * Set visibility to views when search bar is expanded or collapsed
+     */
+    private void setViewVisibility() {
+        // Display search bar and hide icons
+        ibSearchInDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showSearchBar();
+                etSearchDetail.requestFocus();
+                Utils.openKeyboard(etSearchDetail, DetailActivity.this);
+            }
+        });
+
+        // Close the search bar and display icons
+        ibCloseSearchDetail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!etSearchDetail.getText().toString().isEmpty()) {
+                    etSearchDetail.getText().clear();
+                } else {
+                    Utils.closeKeyboard(DetailActivity.this);
+                    hideSearchBar();
+                }
+            }
+        });
+    }
+
+    private void showSearchBar() {
+        ibVoiceSearch.setVisibility(View.GONE);
+        ibFavorite.setVisibility(View.GONE);
+        ibSearchOnline.setVisibility(View.GONE);
+        ibSearchInDetail.setVisibility(View.GONE);
+        relativeLayoutSearchDetail.setVisibility(View.VISIBLE);
+    }
+
+    private void hideSearchBar() {
+        ibVoiceSearch.setVisibility(View.VISIBLE);
+        ibFavorite.setVisibility(View.VISIBLE);
+        ibSearchOnline.setVisibility(View.VISIBLE);
+        ibSearchInDetail.setVisibility(View.VISIBLE);
+        relativeLayoutSearchDetail.setVisibility(View.GONE);
+    }
+
+    /**
+     * Get suggested list of current word in search bar
+     *
+     * @param word
+     */
+    private void resetSuggestedList(String word) {
+        suggestionList.clear();
+        suggestionList = databaseHelper.getSuggestions(word, flag_type);
+        suggestionAdapter = new ArrayAdapter(DetailActivity.this, android.R.layout.simple_list_item_1, suggestionList);
+        listViewSuggestion.setAdapter(suggestionAdapter);
+    }
+
+    /**
+     * Change dictionary type from ENG-POR to POR-ENG and vice versa
+     */
+    private void changeFlagType() {
+        ivFlagDictionaryType.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Change dictionary type
+                if (flag_type == Constants.ENG_POR) {
+                    flag_type = Constants.POR_ENG;
+                    ivFlagDictionaryType.setImageResource(CountryRegion.getCountryFlagIcon());
+                } else if (flag_type == Constants.POR_ENG) {
+                    flag_type = Constants.ENG_POR;
+                    ivFlagDictionaryType.setImageResource(R.drawable.img_england_flag);
+                }
+
+                // Reset suggested list if currently searching for a word
+                String word = etSearchDetail.getText().toString();
+                if (!word.isEmpty()) {
+                    resetSuggestedList(word);
+                }
             }
         });
     }
@@ -322,31 +485,15 @@ public class DetailActivity extends AppCompatActivity {
 
                     // Set image to ibFavorite
                     ibFavorite.setImageResource(R.drawable.ic_favorite_border_24dp);
-                    Toast.makeText(DetailActivity.this, displayWord + " is removed from Favorite", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(DetailActivity.this, displayWord + getString(R.string.is_removed_from_favorite), Toast.LENGTH_SHORT).show();
                 } else {
                     // Add a word to list of Favorite
                     databaseHelper.insertFavorite(wordList_id, displayWord, explanation, dictionary_type);
 
                     // Set img to ibFavorite
                     ibFavorite.setImageResource(R.drawable.ic_favorite_red_24dp);
-                    Toast.makeText(DetailActivity.this, displayWord + " is added to Favorite", Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(DetailActivity.this, displayWord + getString(R.string.is_added_to_favorite), Toast.LENGTH_SHORT).show();
                 }
-            }
-        });
-    }
-
-    /**
-     * Copy a word to clipboard
-     */
-    private void copyToClipboard() {
-        ivCopyDetail.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String displayWord = dictionaryWord.getDisplayWord();
-                ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText(Constants.CLIPBOARD_LABEL, displayWord);
-                clipboard.setPrimaryClip(clip);
             }
         });
     }
@@ -365,46 +512,74 @@ public class DetailActivity extends AppCompatActivity {
 
     /**
      * Call intent and pass data through Detail Activity
+     *
      * @param word
      */
     private void goToDetailActivity(String word) {
         if (word.isEmpty()) {
-            Toast.makeText(DetailActivity.this, "Please type a word", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DetailActivity.this, getString(R.string.please_enter_a_word), Toast.LENGTH_SHORT).show();
         } else {
             // Get id of the word
-            int wordList_id = databaseHelper.getWordListId(word, dictionary_type);
+            final int wordList_id = databaseHelper.getWordListId(word, dictionary_type);
 
             if (wordList_id != -1) {
-                // Init intent and pass data through it
-                Intent intent = new Intent(DetailActivity.this, DetailActivity.class);
-                intent.putExtra(Constants.WORD_LIST_ID, wordList_id);
-                intent.putExtra(Constants.DICTIONARY_TYPE, dictionary_type);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                // Get new word
+                dictionaryWord = databaseHelper.getWord(wordList_id, dictionary_type);
 
-                // Init pair to make transition between activity
-                Pair[] pairs = new Pair[1];
-                pairs[0] = new Pair<View, String>(constrainLayoutDetail, "transition_detail");
+                // Update views
+                tvWordDetail.setText(word);
+                etSearchDetail.getText().clear();
+                tabLayout.selectTab(tabLayout.getTabAt(0));
 
-                // start activity based on the version SDK
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(DetailActivity.this, pairs);
-                    startActivity(intent, options.toBundle());
-                } else {
-                    startActivity(intent);
-                }
+                Utils.closeKeyboard(DetailActivity.this);
+                hideSearchBar();
+                setFavoriteImage(wordList_id);
 
+                // Insert word to History
+                databaseHelper.insertHistory(wordList_id, word, dictionaryWord.getExplanations(), dictionary_type);
+
+                // Update fragment within view pager
+                viewPagerAdapter.updateData(dictionary_type, wordList_id, word);
+                viewPagerAdapter.notifyDataSetChanged();
             } else {
-                Toast.makeText(DetailActivity.this, "Word not found, please search online", Toast.LENGTH_SHORT).show();
+                Toast.makeText(DetailActivity.this, getString(R.string.word_not_found_please_search_onnline), Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    /**
+     * Search online for current word
+     */
+    private void goToOnlineSearchingActivity() {
+        ibSearchOnline.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(DetailActivity.this, OnlineSearchingActivity.class);
+                intent.putExtra(Constants.SEARCH_WORD, dictionaryWord.getDisplayWord());
+                startActivity(intent);
+            }
+        });
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         // Get text from speech
         if (requestCode == Constants.REQUEST_SPEECH_RECOGNIZER && resultCode == RESULT_OK && data != null) {
+            // Get text from speech
             ArrayList<String> matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
             String word = matches.get(0);
+            word = word.toLowerCase();
+
+            // Set type to each element
+            if (flag_type == Constants.ENG_POR) {
+                dictionary_type = Constants.ENG_POR;
+                synonym_type = Constants.POR_ENG;
+            } else if (flag_type == Constants.POR_ENG) {
+                dictionary_type = Constants.POR_ENG;
+                synonym_type = Constants.ENG_POR;
+            }
+
+            // Reload activity with a new word
             goToDetailActivity(word);
         }
 
@@ -413,21 +588,31 @@ public class DetailActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        if (relativeLayoutSearchDetail.getVisibility() == View.VISIBLE) {
+            etSearchDetail.getText().clear();
+            Utils.closeKeyboard(DetailActivity.this);
+            hideSearchBar();
+        } else if (tabLayout.getSelectedTabPosition() != 0) {
+            tabLayout.selectTab(tabLayout.getTabAt(0));
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
     }
 
     @Override
     protected void onDestroy() {
-        if (textToSpeech != null) {
-            textToSpeech.stop();
-            textToSpeech.shutdown();
-        }
+        // Shutdown all tts instances
+        localTextToSpeech.shutdown();
 
+        // Stop tts audio
+        googleTextToSpeech.stopPlay();
+
+        // Close db
         databaseHelper.close();
+
         super.onDestroy();
     }
-
 
 }

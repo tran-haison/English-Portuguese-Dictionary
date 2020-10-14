@@ -3,39 +3,55 @@
     <string name="portuguese_dictionary">Portuguese Dictionary</string>
 
     <!-- Prompts -->
-    <string name="a_simple_dictionary_app">Simple dictionary app</string>
-    <string name="type_a_word_to_get_its_meaning">Type a word to get its meaning</string>
+    <string name="Dictionary">Dictionary</string>
+    <string name="quickly_search_by_typing_a_word">Quickly search by typing a word</string>
+    <string name="please_enter_a_word">Please enter a word</string>
+    <string name="word_not_found">Word not found</string>
+    <string name="word_not_found_please_search_onnline">Word not found, please search online</string>
+    <string name="text_is_empty">Text is empty</string>
     <string name="type_a_word">Type a word</string>
-    <string name="speech_recognizer">Hi! Tell me what word you want to search</string>
-    <string name="search">Search...</string>
-    <string name="not_found">Not found...</string>
+    <string name="please_enter_text_to_be_translated">Please enter the text to translate</string>
+    <string name="translating_">Translating...</string>
+    <string name="result">Result</string>
+    <string name="error_translation">Error translation</string>
+    <string name="model_could_not_be_downloaded">Model could not be downloaded</string>
+    <string name="no_internet_connection">No Internet connection</string>
+    <string name="language_not_supported">Language is not supported</string>
+    <string name="initialize_failed">Initialize failed</string>
+    <string name="failed_to_load_ad">Failed to load ad.</string>
+    <string name="connected">Connected</string>
 
     <!-- Dictionary type -->
-    <string name="eng_por">English - Portuguese</string>
-    <string name="por_eng">Portuguese - English</string>
-    <string name="e_p">E-P</string>
-    <string name="p_e">P-E</string>
+    <string name="en">en</string>
+    <string name="pt">pt</string>
 
-    <!-- For Views -->
+    <!-- For buttons and image views -->
     <string name="todo">TODO</string>
     <string name="clear_all_history">Clear all history</string>
     <string name="translate">Translate</string>
-    <string name="online_searching">Online searching</string>
 
-    <!-- Main Fragment -->
-    <string name="word_of_the_day">Word of the day</string>
-    <string name="translate_text">Translate text</string>
-    <string name="find_a_word_online">Find a word online</string>
-    <string name="search_">Search</string>
-    <string name="hello">Hello</string>
-    <string name="welcome_to_english_portuguese_dictionary">Welcome to English Portuguese Dictionary</string>
-    <string name="benifit">[benifit]</string>
-    <string name="result">Result</string>
+    <!-- For text views -->
+    <string name="uk">UK</string>
+    <string name="us">US</string>
+    <string name="not_found">Not found...</string>
+    <string name="online_searching">Online searching</string>
+    <string name="history">history</string>
+    <string name="word_look_up">look up</string>
+    <string name="text_translation">translate</string>
+    <string name="Favorite">Favorite</string>
+    <string name="favorite">favorite</string>
+    <string name="share_this_app">Share this app</string>
+    <string name="see_all">See all</string>
+    <string name="like_this_app">Like this app?</string>
+    <string name="rate_us">Rate us</string>
+    <string name="or">or</string>
+    <string name="_15_09_2020">15/09/2020</string>
 
     <!-- Definition Fragment -->
     <string name="definition">Definition</string>
     <string name="grammars">Grammars</string>
-    <string name="example_definition">* proveito\n* benéfico, favor\n* vantagem\n* privilégio\n* beneficiar\n* aproveitar\n* lucrar</string>
+    <string name="benifit">[benifit]</string>
+    <string name="example_definition" translatable="false">* proveito\n* benéfico, favor\n* vantagem\n* privilégio\n* beneficiar\n* aproveitar\n* lucrar</string>
     <string name="pronounce">Pronounce</string>
 
     <!-- Explanation Fragment -->
@@ -43,29 +59,37 @@
     <string name="synonyms">Synonyms</string>
 
     <!-- Card View layout adapter -->
-    <string name="example_english_sentence">I got much benefit from that book</string>
-    <string name="example_translation">Tirei muito proveito desse livro.</string>
+    <string name="example_english_sentence" translatable="false">I got much benefit from that book</string>
+    <string name="example_translation" translatable="false">Tirei muito proveito desse livro.</string>
     <string name="examples">Examples</string>
-
-    <!-- About us -->
-    <string name="about_us">About us</string>
-    <string name="about_us_1"><![CDATA[We built this application to help people who is struggling to find the right dictionary for learning English & Portuguese.]]></string>
-    <string name="about_us_2">However, We know that there have been a lot of mistakes since We built this app from the day 1. So We will be really grateful if you guys are willing to help us improve it.</string>
-    <string name="about_us_3">Every suggestions and contributions will be welcome, however small.</string>
-    <string name="about_us_signature">- English Portuguese Dictionary -</string>
-
-    <!-- Information -->
-    <string name="information">Information</string>
-    <string name="help_list_of_features">List of features:</string>
-    <string name="help_1">1. Find English/Portuguese word: DEFINITION, ENGLISH EXPLANATION, EXAMPLE and SYNONYM.</string>
-    <string name="help_2">2. Search for an online word.</string>
-    <string name="help_3">3. Show 1 new English word each day (help you learn new word).</string>
-    <string name="help_4">4. Translate text.</string>
-    <string name="help_5">5. Text to speech - pronounce a word and/or a sentence.</string>
-    <string name="help_6">6. Speech to text - find a word by saying it.</string>
-    <string name="help_7">7. Add words to list of Favorite.</string>
-    <string name="help_prompt">For more information, please leave your question below</string>
-    <string name="help_question">Your question?</string>
-    <string name="help_submit">Submit</string>
+    <string name="example">Example</string>
+    <string name="translate_text">Translate text</string>
+    <string name="recent_words">Recent words</string>
+    <string name="_1" translatable="false">1.</string>
+    <string name="empty_list">Empty list</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete">Delete</string>
+    <string name="do_you_want_to_delete_all_history">Do you want to delete all History?</string>
+    <string name="english_word">English word</string>
+    <string name="portuguese_word">Portuguese word</string>
+    <string name="welcome_to_english_portuguese_dictionary">Welcome to English Portuguese Dictionary</string>
+    <string name="please_connect_to_the_internet_to_proceed_further">Please connect to the internet to proceed further</string>
+    <string name="please_connect_to_wifi_to_download_translation_model">Please connect to Wifi to download translation model</string>
+    <string name="connect">Connect</string>
+    <string name="english_or_portuguese">English or Portuguese</string>
+    <string name="please_wait">Please Wait...</string>
+    <string name="click">Click</string>
+    <string name="here">here</string>
+    <string name="to_search_for_a_word">to search for a word</string>
+    <string name="is_removed_from_favorite"> is removed from Favorite</string>
+    <string name="is_added_to_favorite"> is added to Favorite</string>
+    <string name="explanation">Explanation</string>
+    <string name="synonym">Synonym</string>
+    <string name="english_text">English text</string>
+    <string name="portuguese_text">Portuguese text</string>
+    <string name="retry">Retry</string>
+    <string name="translation_model_has_been_downloaded_successfully">Translation model has been downloaded successfully</string>
+    <string name="downloading_translation_model">Downloading translation model...</string>
+    <string name="english_portuguese">English Portuguese</string>
 
 </resources>
