@@ -1,4 +1,4 @@
-# English-Portugese-dictionary
+# English-Portuguese-dictionary
 
 * An Android application for English/Portuguese learners
 * Link to app on Google Play: [English Portuguese Dictionary](https://bit.ly/3sg97h0)
